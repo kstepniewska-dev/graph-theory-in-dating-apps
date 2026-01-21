@@ -1,0 +1,863 @@
+<!doctype html>
+<html lang="pl">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Teoria grafów w aplikacjach randkowych — moja część</title>
+    <style>
+        :root {
+            --bg: #0b0f1a;
+            --panel: #121a2b;
+            --text: #eef3ff;
+            --muted: #b9c3df;
+            --accent: #6ee7ff;
+            --accent2: #a78bfa;
+            --good: #86efac;
+            --warn: #fde68a;
+            --bad: #fb7185;
+            --shadow: 0 18px 50px rgba(0, 0, 0, .35);
+            --radius: 22px;
+        }
+
+        * {
+            box-sizing: border-box
+        }
+
+        body {
+            margin: 0;
+            font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial, "Noto Sans", "Liberation Sans", sans-serif;
+            background: radial-gradient(1200px 700px at 10% 10%, rgba(110, 231, 255, .12), transparent 45%),
+                radial-gradient(900px 600px at 90% 20%, rgba(167, 139, 250, .10), transparent 45%),
+                var(--bg);
+            color: var(--text);
+            overflow: hidden;
+        }
+
+        .deck {
+            height: 100vh;
+            display: grid;
+            place-items: center;
+            padding: 22px;
+        }
+
+        .slide {
+            /* increased slide size tuned for 1920x1080 displays */
+            width: min(1400px, 98vw);
+            max-width: 100%;
+            height: min(860px, 96vh);
+            background: linear-gradient(180deg, rgba(255, 255, 255, .06), rgba(255, 255, 255, .03));
+            border: 1px solid rgba(255, 255, 255, .10);
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            padding: 40px 48px;
+            /* slightly reduced padding to fit more content */
+            position: relative;
+            display: none;
+            /* keep overflow visible so cards/SVGs aren't clipped */
+            overflow: visible;
+        }
+
+        .slide.active {
+            display: block;
+        }
+
+        h1,
+        h2 {
+            margin: 0 0 14px 0;
+            letter-spacing: .2px;
+        }
+
+        h1 {
+            font-size: 44px;
+            line-height: 1.08;
+        }
+
+        h2 {
+            font-size: 34px;
+            line-height: 1.15;
+        }
+
+        p,
+        li {
+            color: var(--muted);
+            font-size: 20px;
+            line-height: 1.55;
+        }
+
+        .kicker {
+            display: inline-flex;
+            gap: 10px;
+            align-items: center;
+            padding: 8px 14px;
+            background: rgba(110, 231, 255, .10);
+            border: 1px solid rgba(110, 231, 255, .22);
+            border-radius: 999px;
+            color: var(--text);
+            font-weight: 600;
+            margin-bottom: 18px;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: 1.15fr .85fr;
+            gap: 26px;
+            margin-top: 18px;
+        }
+
+        .card {
+            background: rgba(18, 26, 43, .75);
+            border: 1px solid rgba(255, 255, 255, .10);
+            border-radius: 18px;
+            padding: 18px 18px;
+            overflow: visible;
+        }
+
+        .pill {
+            display: inline-block;
+            padding: 6px 10px;
+            border-radius: 999px;
+            font-size: 14px;
+            font-weight: 700;
+            letter-spacing: .2px;
+            border: 1px solid rgba(255, 255, 255, .12);
+            background: rgba(255, 255, 255, .06);
+            color: var(--text);
+            margin-right: 8px;
+            margin-bottom: 8px;
+            user-select: none;
+        }
+
+        .pill.good {
+            border-color: rgba(134, 239, 172, .35);
+            background: rgba(134, 239, 172, .10);
+        }
+
+        .pill.warn {
+            border-color: rgba(253, 230, 138, .35);
+            background: rgba(253, 230, 138, .10);
+        }
+
+        .pill.bad {
+            border-color: rgba(251, 113, 133, .35);
+            background: rgba(251, 113, 133, .10);
+        }
+
+        .footer {
+            position: absolute;
+            left: 22px;
+            right: 22px;
+            bottom: 16px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            color: rgba(238, 243, 255, .70);
+            font-size: 14px;
+            gap: 10px;
+        }
+
+        .progress {
+            height: 8px;
+            width: 180px;
+            background: rgba(255, 255, 255, .08);
+            border-radius: 999px;
+            overflow: hidden;
+            border: 1px solid rgba(255, 255, 255, .10);
+        }
+
+        .bar {
+            height: 100%;
+            width: 0%;
+            background: linear-gradient(90deg, var(--accent), var(--accent2));
+        }
+
+        .kbd {
+            font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace;
+            font-size: 12px;
+            padding: 2px 6px;
+            border: 1px solid rgba(255, 255, 255, .22);
+            border-bottom-width: 2px;
+            border-radius: 6px;
+            color: rgba(238, 243, 255, .85);
+            background: rgba(0, 0, 0, .18);
+            margin-left: 6px;
+        }
+
+        .two {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 18px;
+            margin-top: 14px;
+        }
+
+        .mono {
+            font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace;
+        }
+
+        .small {
+            font-size: 16px;
+        }
+
+        svg {
+            width: 100%;
+            height: auto;
+            display: block;
+        }
+
+        /* Constrain large SVGs so they don't push outside slide bounds (expanded for larger slides) */
+        .card svg {
+            max-height: calc(80vh);
+            width: 100%;
+            height: auto;
+        }
+
+        .legend {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 10px;
+        }
+
+        .note {
+            margin-top: 14px;
+            padding: 12px 14px;
+            border-radius: 14px;
+            border: 1px dashed rgba(255, 255, 255, .16);
+            background: rgba(255, 255, 255, .04);
+        }
+
+        a {
+            color: var(--accent);
+            text-decoration: none;
+        }
+
+        a:hover {
+            text-decoration: underline;
+        }
+
+        /* Responsive adjustments for small screens */
+        @media (max-width: 900px) {
+            .slide {
+                padding: 20px;
+            }
+
+            .grid {
+                grid-template-columns: 1fr;
+            }
+
+            .two {
+                grid-template-columns: 1fr;
+            }
+
+            h1 {
+                font-size: 28px;
+            }
+
+            h2 {
+                font-size: 22px;
+            }
+
+            .deck {
+                padding: 12px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="deck" id="deck">
+
+        <!-- SLIDE 1 -->
+        <section class="slide active">
+            <div class="kicker">📓 Gdyby Bridget Jones miała Tindera...</div>
+            <h1>Analiza sieci społecznej Bridget Jones</h1>
+            <p>
+                Za pomocą grafów modelujemy osoby - użytkowników aplikacji - oraz relacje między nimi.
+                Możemy formalnie opisać zjawiska typu <i>like</i>, <i>superlike</i>, <i>match</i>, <i>ghosting</i> 
+                i wiele innych.
+            </p>
+
+            <div class="grid">
+                <div class="card">
+                    <h2>Co tu pokażę?</h2>
+                    <ul>
+                        <li>Podstawy teorii grafów: <b>wierzchołki</b> i <b>krawędzie</b>.</li>
+                        <li>Rodzaje relacji: <b>skierowane</b> i <b>nieskierowane</b>.</li>
+                        <li>Własności relacji: <b>zwrotność</b>, <b>symetryczność</b>, <b>przechodniość</b>.</li>
+                        <li>Ciąg grafów <b>Bridget Jones</b> zmieniających się w czasie.</li>
+                    </ul>
+                </div>
+                <div class="card">
+                    <h2>Nawigacja</h2>
+                    <p>
+                        Poprzedni slajd <span class="kbd">←</span><br/>
+                        Następny slajd <span class="kbd">→</span><br/>
+                        Fullscreen <span class="kbd">F</span><br/>
+                        Wyjście <span class="kbd">Esc</span>
+                    </p>
+                </div>
+            </div>
+
+            <div class="footer">
+                <div>kstepniewska-dev • Teoria grafów w aplikacjach randkowych</div>
+                <div class="progress">
+                    <div class="bar" data-bar></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SLIDE 2 -->
+        <section class="slide">
+            <div class="kicker">🧠 Model matematyczny Tindera</div>
+            <h2>Użytkownicy jako wierzchołki, relacje jako krawędzie</h2>
+            <div class="two">
+                <div class="card">
+                    <p><span class="pill">Użytkownik</span> wierzchołek to osoba (np. Bridget Jones, Mark Darcy…)</p>
+                    <p><span class="pill">Like</span> krawędź skierowana, czyli akcja: Bridget polubiła Marka</p>
+                    <p><span class="pill good">Match</span> krawędź nieskierowana, która powstanie wtedy i tylko wtedy, gdy zaistnieją dwa polubienia: Bridget→Mark oraz Mark→Bridget</p>
+                    <p><span class="pill warn">Superlike</span> to inny typ krawędzi skierowanej (o większej wadze)</p>
+                    <p><span class="pill bad">Ghosting</span> przerwanie relacji w czasie (krawędź znika)</p>
+                </div>
+                <div class="card">
+                    <h3 style="margin:0 0 10px 0;">Formalnie</h3>
+                    <p class="mono small">
+                        G = (V, E)<br />
+                        V — zbiór osób<br />
+                        E ⊆ V × V — relacja „like” (skierowana)
+                    </p>
+                    <p class="small">
+                        Wariant: graf ważony (superlike ma większą wagę), albo graf wielowarstwowy
+                        (osobne warstwy: like, superlike, message, date).
+                    </p>
+                </div>
+            </div>
+
+            <div class="footer">
+                <div>Slajd 2</div>
+                <div class="progress">
+                    <div class="bar" data-bar></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SLIDE 3 -->
+        <section class="slide">
+            <div class="kicker">❤️ Relacje w praktyce</div>
+            <h2>Like, superlike, match - i co z tego wynika?</h2>
+
+            <div class="grid">
+                <div class="card">
+                    <h3 style="margin:0 0 10px 0;">Relacje jako własności</h3>
+                    <ul>
+                        <li><b>Like</b> zwykle nie jest <b>symetryczny</b>: A→B nie wymusza B→A.</li>
+                        <li><b>Match</b> tworzy relację <b>symetryczną</b> (w praktyce: krawędź nieskierowana).</li>
+                        <li><b>Superlike</b> może być traktowany jako <b>like</b> o większej wadze.</li>
+                        <li><b>Ghosting</b> to zmiana grafu w czasie: krawędź zanika.</li>
+                    </ul>
+                </div>
+
+                <div class="card">
+                    <h3 style="margin:0 0 10px 0;">Notacja</h3>
+                    <p class="mono small">
+                        like(A,B) = 1 ⇔ A→B ∈ E<br />
+                        match(A,B) = 1 ⇔ like(A,B)=1 ∧ like(B,A)=1
+                    </p>
+                    <div class="legend">
+                        <span class="pill">A→B like</span>
+                        <span class="pill warn">A⇒B superlike</span>
+                        <span class="pill good">A—B match</span>
+                        <span class="pill bad">× ghosting</span>
+                    </div>
+                    <div class="note small">
+                        W aplikacjach randkowych ta „matematyka” realnie wpływa na UX: kto komu się wyświetla,
+                        jak działa ranking i filtrowanie.
+                    </div>
+                </div>
+            </div>
+
+            <div class="footer">
+                <div>Slajd 3</div>
+                <div class="progress">
+                    <div class="bar" data-bar></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SLIDE 4 -->
+        <section class="slide">
+            <div class="kicker">🕸️ Ciąg grafów - Bridget Jones - akt I</div>
+            <h2>Dziennik Bridget Jones</h2>
+            <p class="small">
+                Poniżej: wierzchołki to postacie, strzałki to <b>like</b>.
+            </p>
+
+            <div class="grid">
+                <div class="card">
+                    <svg viewBox="0 0 520 300" role="img" aria-label="Mini graf relacji">
+                        <!-- nodes -->
+                        <defs>
+                            <filter id="glow">
+                                <feGaussianBlur stdDeviation="3" result="coloredBlur" />
+                                <feMerge>
+                                    <feMergeNode in="coloredBlur" />
+                                    <feMergeNode in="SourceGraphic" />
+                                </feMerge>
+                            </filter>
+                            <marker id="arrow" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto">
+                                <path d="M0,0 L10,3 L0,6 Z" fill="rgba(238,243,255,.75)"></path>
+                            </marker>
+                            <marker id="arrow2" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto">
+                                <path d="M0,0 L10,3 L0,6 Z" fill="rgba(110,231,255,.90)"></path>
+                            </marker>
+                        </defs>
+
+                        <!-- edges (aligned to current node centers) -->
+                        <!-- Bridget -> Mark -->
+                        <path d="M160 150 C200 110, 260 90, 280 110" stroke="rgba(238,243,255,.70)" stroke-width="2.5"
+                            fill="none" marker-end="url(#arrow)" />
+                        <!-- Mark -> Bridget -->
+                        <path d="M300 120 C260 180, 200 200, 140 160" stroke="rgba(238,243,255,.70)" stroke-width="2.5"
+                            fill="none" marker-end="url(#arrow)" />
+                        <!-- Bridget -> Daniel -->
+                        <path d="M160 150 C160 230, 240 270, 280 230" stroke="rgba(238,243,255,.45)" stroke-width="2.5"
+                            fill="none" marker-end="url(#arrow)" />
+
+                        <!-- nodes -->
+                        <g filter="url(#glow)">
+                            <circle cx="110" cy="150" r="50" fill="rgba(110,231,255,.18)" stroke="rgba(110,231,255,.75)"
+                                stroke-width="2" />
+                            <text x="110" y="156" text-anchor="middle" fill="rgba(238,243,255,.95)" font-size="12"
+                                font-weight="700">Bridget Jones</text>
+
+                            <circle cx="330" cy="100" r="50" fill="rgba(167,139,250,.18)" stroke="rgba(167,139,250,.75)"
+                                stroke-width="2" />
+                            <text x="330" y="106" text-anchor="middle" fill="rgba(238,243,255,.95)" font-size="12"
+                                font-weight="700">Mark Darcy</text>
+
+                            <circle cx="330" cy="230" r="50" fill="rgba(251,113,133,.12)" stroke="rgba(251,113,133,.65)"
+                                stroke-width="2" />
+                            <text x="330" y="236" text-anchor="middle" fill="rgba(238,243,255,.95)" font-size="12"
+                                font-weight="700">Daniel Cleaver</text>
+                        </g>
+                    </svg>
+
+                    <div class="legend">
+                        <span class="pill">Bridget Jones ↔ Mark Darcy = match</span>
+                        <span class="pill warn">Asystentka Marka ⇒ Bridget Jones = (super)like jednostronny</span>
+                        <span class="pill bad">Daniel Cleaver — relacja przerywana (on/off)</span>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <h3 style="margin:0 0 10px 0;">Interpretacja</h3>
+                    <ul>
+                        <li>Match: Bridget Jones i Mark Darcy mają krawędzie w obie strony (symetria).</li>
+                        <li>Asystentka Marka → Bridget Jones: jednostronna relacja (niesymetria).</li>
+                        <li>Daniel Cleaver: „krawędź przerywana” sugeruje niestabilność / ghosting / powroty.</li>
+                    </ul>
+                    <div class="note small">
+                        Ten slajd możesz łatwo rozszerzyć o Jacka Qwanta, Roxstera i Scotta —
+                        dokładnie tak, jak potrzebujecie w projekcie.
+                    </div>
+                </div>
+            </div>
+
+            <div class="footer">
+                <div>Slajd 4</div>
+                <div class="progress">
+                    <div class="bar" data-bar></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SLIDE 5 -->
+        <section class="slide">
+            <div class="kicker">🕸️ Ciąg grafów - Bridget Jones - akt III</div>
+            <h2>Bridget Jones: W pogoni za rozumem</h2>
+            <p class="small">
+                Poniżej: wierzchołki to postacie, strzałki to „like”. Match zaznaczamy jako dwukierunkowość.
+                Ghosting traktujemy jako zdarzenie w czasie (krawędź znika).
+            </p>
+
+            <div class="grid">
+                <div class="card">
+                    <svg viewBox="0 0 520 300" role="img" aria-label="Mini graf relacji">
+                        <!-- nodes -->
+                        <defs>
+                            <filter id="glow">
+                                <feGaussianBlur stdDeviation="3" result="coloredBlur" />
+                                <feMerge>
+                                    <feMergeNode in="coloredBlur" />
+                                    <feMergeNode in="SourceGraphic" />
+                                </feMerge>
+                            </filter>
+                            <marker id="arrow" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto">
+                                <path d="M0,0 L10,3 L0,6 Z" fill="rgba(238,243,255,.75)"></path>
+                            </marker>
+                            <marker id="arrow2" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto">
+                                <path d="M0,0 L10,3 L0,6 Z" fill="rgba(110,231,255,.90)"></path>
+                            </marker>
+                        </defs>
+
+                        <!-- edges -->
+                        <path d="M120 150 C180 80, 260 80, 310 140" stroke="rgba(238,243,255,.70)" stroke-width="2.5"
+                            fill="none" marker-end="url(#arrow)" />
+                        <path d="M320 150 C260 220, 180 220, 130 160" stroke="rgba(238,243,255,.70)" stroke-width="2.5"
+                            fill="none" marker-end="url(#arrow)" />
+                        <!-- Bridget Jones -> Daniel Cleaver -->
+                        <path d="M120 150 C140 250, 240 270, 310 230" stroke="rgba(238,243,255,.45)" stroke-width="2.5"
+                            fill="none" marker-end="url(#arrow)" />
+                        <!-- Daniel Cleaver -> Bridget Jones (weak / on-off) -->
+                        <path d="M320 220 C260 160, 200 140, 140 150" stroke="rgba(251,113,133,.55)" stroke-width="2.5"
+                            fill="none" stroke-dasharray="6 6" marker-end="url(#arrow)" />
+                        <!-- Asystentka Marka -> Bridget Jones (like one-way) -->
+                        <path d="M260 60 C190 70, 150 100, 130 140" stroke="rgba(110,231,255,.85)" stroke-width="2.5"
+                            fill="none" marker-end="url(#arrow2)" />
+
+                        <!-- nodes -->
+                        <g filter="url(#glow)">
+                            <circle cx="110" cy="150" r="50" fill="rgba(110,231,255,.18)" stroke="rgba(110,231,255,.75)"
+                                stroke-width="2" />
+                            <text x="110" y="156" text-anchor="middle" fill="rgba(238,243,255,.95)" font-size="12"
+                                font-weight="700">Bridget Jones</text>
+
+                            <circle cx="330" cy="150" r="50" fill="rgba(167,139,250,.18)" stroke="rgba(167,139,250,.75)"
+                                stroke-width="2" />
+                            <text x="330" y="156" text-anchor="middle" fill="rgba(238,243,255,.95)" font-size="12"
+                                font-weight="700">Mark Darcy</text>
+
+                            <circle cx="330" cy="230" r="50" fill="rgba(251,113,133,.12)" stroke="rgba(251,113,133,.65)"
+                                stroke-width="2" />
+                            <text x="330" y="236" text-anchor="middle" fill="rgba(238,243,255,.95)" font-size="12"
+                                font-weight="700">Daniel Cleaver</text>
+
+                            <circle cx="260" cy="60" r="24" fill="rgba(110,231,255,.10)" stroke="rgba(110,231,255,.55)"
+                                stroke-width="2" />
+                            <text x="260" y="66" text-anchor="middle" fill="rgba(238,243,255,.92)" font-size="12"
+                                font-weight="700">Asystentka Marka</text>
+                        </g>
+                    </svg>
+
+                    <div class="legend">
+                        <span class="pill">Bridget Jones ↔ Mark Darcy = match</span>
+                        <span class="pill bad">Daniel Cleaver — relacja przerywana (on/off)</span>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <h3 style="margin:0 0 10px 0;">Interpretacja</h3>
+                    <ul>
+                        <li>Match: Bridget Jones i Mark Darcy mają krawędzie w obie strony (symetria).</li>
+                        <li>Daniel Cleaver: „krawędź przerywana” sugeruje niestabilność / ghosting / powroty.</li>
+                    </ul>
+                    <div class="note small">
+                        Ten slajd możesz łatwo rozszerzyć o Jacka Qwanta, Roxstera McDuffa i Scotta —
+                        dokładnie tak, jak potrzebujecie w projekcie.
+                    </div>
+                </div>
+            </div>
+
+            <div class="footer">
+                <div>Slajd 5</div>
+                <div class="progress">
+                    <div class="bar" data-bar></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SLIDE 6 -->
+        <section class="slide">
+            <div class="kicker">🕸️ Ciąg grafów - Bridget Jones - akt II</div>
+            <h2>Bridget Jones 3</h2>
+            <p class="small">
+                Poniżej: wierzchołki to postacie, strzałki to „like”. Match zaznaczamy jako dwukierunkowość.
+                Ghosting traktujemy jako zdarzenie w czasie (krawędź znika).
+            </p>
+
+            <div class="grid">
+                <div class="card">
+                    <svg viewBox="0 0 520 300" role="img" aria-label="Mini graf relacji">
+                        <!-- nodes -->
+                        <defs>
+                            <filter id="glow">
+                                <feGaussianBlur stdDeviation="3" result="coloredBlur" />
+                                <feMerge>
+                                    <feMergeNode in="coloredBlur" />
+                                    <feMergeNode in="SourceGraphic" />
+                                </feMerge>
+                            </filter>
+                            <marker id="arrow" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto">
+                                <path d="M0,0 L10,3 L0,6 Z" fill="rgba(238,243,255,.75)"></path>
+                            </marker>
+                            <marker id="arrow2" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto">
+                                <path d="M0,0 L10,3 L0,6 Z" fill="rgba(110,231,255,.90)"></path>
+                            </marker>
+                        </defs>
+
+                        <!-- edges -->
+                        <path d="M120 150 C180 80, 260 80, 310 140" stroke="rgba(238,243,255,.70)" stroke-width="2.5"
+                            fill="none" marker-end="url(#arrow)" />
+                        <path d="M320 150 C260 220, 180 220, 130 160" stroke="rgba(238,243,255,.70)" stroke-width="2.5"
+                            fill="none" marker-end="url(#arrow)" />
+                        <!-- Bridget Jones -> Jack Qwant -->
+                        <path d="M120 150 C140 250, 240 270, 310 230" stroke="rgba(238,243,255,.45)" stroke-width="2.5"
+                            fill="none" marker-end="url(#arrow)" />
+                        <!-- Jack Qwant -> Bridget Jones (weak / on-off) -->
+                        <path d="M320 220 C260 160, 200 140, 140 150" stroke="rgba(251,113,133,.55)" stroke-width="2.5"
+                            fill="none" stroke-dasharray="6 6" marker-end="url(#arrow)" />
+
+                        <!-- nodes -->
+                        <g filter="url(#glow)">
+                            <circle cx="110" cy="150" r="50" fill="rgba(110,231,255,.18)" stroke="rgba(110,231,255,.75)"
+                                stroke-width="2" />
+                            <text x="110" y="156" text-anchor="middle" fill="rgba(238,243,255,.95)" font-size="12"
+                                font-weight="700">Bridget Jones</text>
+
+                            <circle cx="330" cy="150" r="50" fill="rgba(167,139,250,.18)" stroke="rgba(167,139,250,.75)"
+                                stroke-width="2" />
+                            <text x="330" y="156" text-anchor="middle" fill="rgba(238,243,255,.95)" font-size="12"
+                                font-weight="700">Mark Darcy</text>
+
+                            <circle cx="330" cy="230" r="50" fill="rgba(251,113,133,.12)" stroke="rgba(251,113,133,.65)"
+                                stroke-width="2" />
+                            <text x="330" y="236" text-anchor="middle" fill="rgba(238,243,255,.95)" font-size="12"
+                                font-weight="700">Jack Qwant</text>
+
+                            <!-- Asystentka removed from this slide -->
+                        </g>
+                    </svg>
+
+                    <div class="legend">
+                        <span class="pill">Bridget Jones ↔ Mark Darcy = match</span>
+                        <span class="pill bad">Jack Qwant ↔ relacja = match</span>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <h3 style="margin:0 0 10px 0;">Interpretacja</h3>
+                    <ul>
+                        <li>Match: Bridget Jones i Mark Darcy mają krawędzie w obie strony (symetria).</li>
+                        <li>Match: Bridget Jones i Jack Qwant mają krawędzie w obie strony (symetria).</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="footer">
+                <div>Slajd 6</div>
+                <div class="progress">
+                    <div class="bar" data-bar></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SLIDE 7 -->
+        <section class="slide">
+            <div class="kicker">🕸️ Ciąg grafów - Bridget Jones - akt IV</div>
+            <h2>Bridget Jones: Szalejąc za facetem</h2>
+            <p class="small">
+                Poniżej: wierzchołki to postacie, strzałki to „like”. Match zaznaczamy jako dwukierunkowość.
+                Ghosting traktujemy jako zdarzenie w czasie (krawędź znika).
+            </p>
+
+            <div class="grid">
+                <div class="card">
+                    <svg viewBox="0 0 520 300" role="img" aria-label="Mini graf relacji">
+                        <!-- nodes -->
+                        <defs>
+                            <filter id="glow">
+                                <feGaussianBlur stdDeviation="3" result="coloredBlur" />
+                                <feMerge>
+                                    <feMergeNode in="coloredBlur" />
+                                    <feMergeNode in="SourceGraphic" />
+                                </feMerge>
+                            </filter>
+                            <marker id="arrow" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto">
+                                <path d="M0,0 L10,3 L0,6 Z" fill="rgba(238,243,255,.75)"></path>
+                            </marker>
+                            <marker id="arrow2" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto">
+                                <path d="M0,0 L10,3 L0,6 Z" fill="rgba(110,231,255,.90)"></path>
+                            </marker>
+                        </defs>
+
+                        <!-- edges -->
+                        <path d="M120 150 C180 80, 260 80, 310 140" stroke="rgba(238,243,255,.70)" stroke-width="2.5"
+                            fill="none" marker-end="url(#arrow)" />
+                        <path d="M320 150 C260 220, 180 220, 130 160" stroke="rgba(238,243,255,.70)" stroke-width="2.5"
+                            fill="none" marker-end="url(#arrow)" />
+                        <!-- Bridget Jones -> Roxter McDuff -->
+                        <path d="M120 150 C140 250, 240 270, 310 230" stroke="rgba(238,243,255,.45)" stroke-width="2.5"
+                            fill="none" marker-end="url(#arrow)" />
+                        <!-- Roxter McDuff -> Bridget Jones (weak / on-off) -->
+                        <path d="M320 220 C260 160, 200 140, 140 150" stroke="rgba(251,113,133,.55)" stroke-width="2.5"
+                            fill="none" stroke-dasharray="6 6" marker-end="url(#arrow)" />
+                        <!-- Bridget Jones -> Scott -->
+                        <path d="M120 150 C130 260, 230 280, 310 230" stroke="rgba(238,243,255,.45)" stroke-width="2.5"
+                            fill="none" marker-end="url(#arrow)" />
+
+                        <!-- nodes -->
+                        <g filter="url(#glow)">
+                            <circle cx="110" cy="150" r="50" fill="rgba(110,231,255,.18)" stroke="rgba(110,231,255,.75)"
+                                stroke-width="2" />
+                            <text x="110" y="156" text-anchor="middle" fill="rgba(238,243,255,.95)" font-size="12"
+                                font-weight="700">Bridget Jones</text>
+
+                            <circle cx="330" cy="150" r="50" fill="rgba(167,139,250,.18)" stroke="rgba(167,139,250,.75)"
+                                stroke-width="2" />
+                            <text x="330" y="156" text-anchor="middle" fill="rgba(238,243,255,.95)" font-size="12"
+                                font-weight="700">Scott</text>
+
+                            <circle cx="330" cy="230" r="50" fill="rgba(251,113,133,.12)" stroke="rgba(251,113,133,.65)"
+                                stroke-width="2" />
+                            <text x="330" y="236" text-anchor="middle" fill="rgba(238,243,255,.95)" font-size="12"
+                                font-weight="700">Roxter McDuff</text>
+                        </g>
+                    </svg>
+
+                    <div class="legend">
+                        <span class="pill">Bridget Jones ↔ Mark Darcy = match</span>
+                        <span class="pill bad">Daniel Cleaver — relacja przerywana (on/off)</span>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <h3 style="margin:0 0 10px 0;">Interpretacja</h3>
+                    <ul>
+                        <li>Match: Bridget Jones i Mark Darcy mają krawędzie w obie strony (symetria).</li>
+                        <li>Daniel Cleaver: „krawędź przerywana” sugeruje niestabilność / ghosting / powroty.</li>
+                    </ul>
+                    <div class="note small">
+                        Ten slajd możesz łatwo rozszerzyć o Jacka Qwanta, Roxstera i Scotta —
+                        dokładnie tak, jak potrzebujecie w projekcie.
+                    </div>
+                </div>
+            </div>
+
+            <div class="footer">
+                <div>Slajd 7</div>
+                <div class="progress">
+                    <div class="bar" data-bar></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SLIDE 8 -->
+        <section class="slide">
+            <div class="kicker">⏱️ Graf dynamiczny</div>
+            <h2>To nie jest jeden graf — to graf w czasie</h2>
+            <div class="grid">
+                <div class="card">
+                    <p>
+                        W randkach online relacje są <b>dynamiczne</b>: pojawiają się, znikają, zmieniają wagę
+                        (np. wiadomości vs cisza). Wtedy opisujemy:
+                    </p>
+                    <p class="mono small">
+                        G(t) = (V(t), E(t))<br />
+                        t — czas (dni / tygodnie / etapy fabuły)
+                    </p>
+                    <ul>
+                        <li><b>ghosting</b>: krawędź znika po czasie, mimo wcześniejszego matchu,</li>
+                        <li><b>konto usunięte</b>: znika wierzchołek,</li>
+                        <li><b>powrót</b>: wierzchołek/krawędzie pojawiają się ponownie.</li>
+                    </ul>
+                </div>
+
+                <div class="card">
+                    <h3 style="margin:0 0 10px 0;">Dlaczego to ciekawe?</h3>
+                    <ul>
+                        <li>Możemy analizować „stabilność” relacji jako trwałość krawędzi.</li>
+                        <li>Możemy liczyć stopnie wierzchołków (kto ma najwięcej interakcji).</li>
+                        <li>Możemy zadać pytania: kiedy graf staje się spójny? kiedy się rozpada?</li>
+                    </ul>
+                    <div class="note small">
+                        Bonus na zajęcia: prosta ankieta „co jest relacją symetryczną, a co nie?”
+                        i rysowanie mini-grafów przez grupę.
+                    </div>
+                </div>
+            </div>
+
+            <div class="footer">
+                <div>Slajd 8</div>
+                <div class="progress">
+                    <div class="bar" data-bar></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SLIDE 9 -->
+        <section class="slide">
+            <div class="kicker">✅ Finał</div>
+            <h2>Podsumowanie (do powiedzenia na głos)</h2>
+            <div class="card">
+                <ul>
+                    <li>Like to relacja skierowana: zwykle nie jest symetryczna 🥲</li>
+                    <li>Match to symetria: dwie krawędzie w przeciwnych kierunkach.</li>
+                    <li>Superlike można modelować wagą lub innym typem krawędzi.</li>
+                    <li>Ghosting i powroty pokazują, że graf jest dynamiczny: G(t).</li>
+                </ul>
+            </div>
+
+            <div class="note">
+                <p class="small" style="margin:0;">
+                    Jeśli chcesz, dopasuję slajdy pod dokładną listę postaci: Mark Darcy, Daniel Cleaver, Jack Qwant,
+                    Roxster, Scott —
+                    i zrobię spójne oznaczenia (kolory/typy krawędzi) pod Wasz finalny „graf Bridget”.
+                </p>
+            </div>
+
+            <div class="footer">
+                <div>Slajd 6</div>
+                <div class="progress">
+                    <div class="bar" data-bar></div>
+                </div>
+            </div>
+        </section>
+
+    </div>
+
+    <script>
+        const slides = Array.from(document.querySelectorAll(".slide"));
+        const bars = Array.from(document.querySelectorAll("[data-bar]"));
+        let idx = 0;
+
+        function render() {
+            slides.forEach((s, i) => s.classList.toggle("active", i === idx));
+            const pct = ((idx + 1) / slides.length) * 100;
+            bars.forEach(b => b.style.width = pct + "%");
+            history.replaceState(null, "", "#" + (idx + 1));
+        }
+
+        function clamp(n, min, max) { return Math.max(min, Math.min(max, n)); }
+
+        function go(delta) {
+            idx = clamp(idx + delta, 0, slides.length - 1);
+            render();
+        }
+
+        function toggleFullscreen() {
+            if (!document.fullscreenElement) {
+                document.documentElement.requestFullscreen?.();
+            } else {
+                document.exitFullscreen?.();
+            }
+        }
+
+        // hash navigation
+        const fromHash = parseInt(location.hash.replace("#", ""), 10);
+        if (!Number.isNaN(fromHash)) idx = clamp(fromHash - 1, 0, slides.length - 1);
+        render();
+
+        window.addEventListener("keydown", (e) => {
+            if (e.key === "ArrowRight" || e.key === "PageDown" || e.key === " ") {
+                e.preventDefault(); go(+1);
+            }
+            if (e.key === "ArrowLeft" || e.key === "PageUp") {
+                e.preventDefault(); go(-1);
+            }
+            if (e.key.toLowerCase() === "f") {
+                e.preventDefault(); toggleFullscreen();
+            }
+        });
+    </script>
+</body>
+
+</html>
