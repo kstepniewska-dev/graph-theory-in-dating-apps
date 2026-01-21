@@ -279,7 +279,7 @@
 
             <div class="grid">
                 <div class="card">
-                    <h2>Co tu pokażę?</h2>
+                    <h2>Co zobaczymy?</h2>
                     <ul>
                         <li>Podstawy teorii grafów: <b>wierzchołki</b> i <b>krawędzie</b>.</li>
                         <li>Rodzaje relacji: <b>skierowane</b> i <b>nieskierowane</b>.</li>
@@ -323,11 +323,7 @@
                     <p class="mono small">
                         G = (V, E)<br />
                         V — zbiór osób<br />
-                        E ⊆ V × V — relacja „like” (skierowana)
-                    </p>
-                    <p class="small">
-                        Wariant: graf ważony (superlike ma większą wagę), albo graf wielowarstwowy
-                        (osobne warstwy: like, superlike, message, date).
+                        E ⊆ V × V — relacja „like" (skierowana)
                     </p>
                 </div>
             </div>
@@ -347,30 +343,21 @@
 
             <div class="grid">
                 <div class="card">
-                    <h3 style="margin:0 0 10px 0;">Relacje jako własności</h3>
+                    <h3 style="margin:0 0 10px 0;">Relacje i ich własności</h3>
                     <ul>
-                        <li><b>Like</b> zwykle nie jest <b>symetryczny</b>: A→B nie wymusza B→A.</li>
-                        <li><b>Match</b> tworzy relację <b>symetryczną</b> (w praktyce: krawędź nieskierowana).</li>
+                        <li><b>Like</b> nie jest <b>zwrotny</b>, bo nie można dać <b>like</b>'a samemu sobie, nie jest również <b>symetryczny</b>: A→B nie wymusza B→A.</li>
+                        <li><b>Match</b> również nie jest <b>zwrotny</b>, ale tworzy relację <b>symetryczną</b> (w praktyce: krawędź nieskierowana).</li>
                         <li><b>Superlike</b> może być traktowany jako <b>like</b> o większej wadze.</li>
-                        <li><b>Ghosting</b> to zmiana grafu w czasie: krawędź zanika.</li>
                     </ul>
                 </div>
 
                 <div class="card">
                     <h3 style="margin:0 0 10px 0;">Notacja</h3>
-                    <p class="mono small">
-                        like(A,B) = 1 ⇔ A→B ∈ E<br />
-                        match(A,B) = 1 ⇔ like(A,B)=1 ∧ like(B,A)=1
-                    </p>
                     <div class="legend">
                         <span class="pill">A→B like</span>
                         <span class="pill warn">A⇒B superlike</span>
                         <span class="pill good">A—B match</span>
                         <span class="pill bad">× ghosting</span>
-                    </div>
-                    <div class="note small">
-                        W aplikacjach randkowych ta „matematyka” realnie wpływa na UX: kto komu się wyświetla,
-                        jak działa ranking i filtrowanie.
                     </div>
                 </div>
             </div>
@@ -387,77 +374,62 @@
         <section class="slide">
             <div class="kicker">🕸️ Ciąg grafów - Bridget Jones - akt I</div>
             <h2>Dziennik Bridget Jones</h2>
-            <p class="small">
-                Poniżej: wierzchołki to postacie, strzałki to <b>like</b>.
-            </p>
 
             <div class="grid">
                 <div class="card">
-                    <svg viewBox="0 0 520 300" role="img" aria-label="Mini graf relacji">
-                        <!-- nodes -->
+                    <svg viewBox="0 0 520 280" role="img" aria-label="Graf relacji - stan końcowy">
                         <defs>
-                            <filter id="glow">
+                            <filter id="glow4">
                                 <feGaussianBlur stdDeviation="3" result="coloredBlur" />
                                 <feMerge>
                                     <feMergeNode in="coloredBlur" />
                                     <feMergeNode in="SourceGraphic" />
                                 </feMerge>
                             </filter>
-                            <marker id="arrow" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto">
-                                <path d="M0,0 L10,3 L0,6 Z" fill="rgba(238,243,255,.75)"></path>
-                            </marker>
-                            <marker id="arrow2" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto">
-                                <path d="M0,0 L10,3 L0,6 Z" fill="rgba(110,231,255,.90)"></path>
+                            <marker id="arrow4" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto">
+                                <path d="M0,0 L10,3 L0,6 Z" fill="rgba(134,239,172,.85)"></path>
                             </marker>
                         </defs>
 
-                        <!-- edges (aligned to current node centers) -->
-                        <!-- Bridget -> Mark -->
-                        <path d="M160 150 C200 110, 260 90, 280 110" stroke="rgba(238,243,255,.70)" stroke-width="2.5"
-                            fill="none" marker-end="url(#arrow)" />
-                        <!-- Mark -> Bridget -->
-                        <path d="M300 120 C260 180, 200 200, 140 160" stroke="rgba(238,243,255,.70)" stroke-width="2.5"
-                            fill="none" marker-end="url(#arrow)" />
-                        <!-- Bridget -> Daniel -->
-                        <path d="M160 150 C160 230, 240 270, 280 230" stroke="rgba(238,243,255,.45)" stroke-width="2.5"
-                            fill="none" marker-end="url(#arrow)" />
+                        <!-- Match Bridget <-> Mark (stan końcowy) -->
+                        <path d="M145 140 C200 80, 300 60, 355 90" stroke="rgba(134,239,172,.85)" stroke-width="2.5"
+                            fill="none" marker-end="url(#arrow4)" />
+                        <path d="M355 120 C300 160, 200 170, 145 150" stroke="rgba(134,239,172,.85)" stroke-width="2.5"
+                            fill="none" marker-end="url(#arrow4)" />
+                        <!-- Usunięta krawędź Daniel (przekreślona) -->
+                        <path d="M145 160 C180 210, 300 240, 370 220" stroke="rgba(251,113,133,.35)" stroke-width="2"
+                            fill="none" stroke-dasharray="8 6" />
 
                         <!-- nodes -->
-                        <g filter="url(#glow)">
-                            <circle cx="110" cy="150" r="50" fill="rgba(110,231,255,.18)" stroke="rgba(110,231,255,.75)"
-                                stroke-width="2" />
-                            <text x="110" y="156" text-anchor="middle" fill="rgba(238,243,255,.95)" font-size="12"
-                                font-weight="700">Bridget Jones</text>
+                        <g filter="url(#glow4)">
+                            <circle cx="100" cy="145" r="42" fill="rgba(110,231,255,.18)" stroke="rgba(110,231,255,.75)" stroke-width="2" />
+                            <text x="100" y="142" text-anchor="middle" fill="rgba(238,243,255,.95)" font-size="11" font-weight="700">Bridget</text>
+                            <text x="100" y="155" text-anchor="middle" fill="rgba(238,243,255,.95)" font-size="11" font-weight="700">Jones</text>
 
-                            <circle cx="330" cy="100" r="50" fill="rgba(167,139,250,.18)" stroke="rgba(167,139,250,.75)"
-                                stroke-width="2" />
-                            <text x="330" y="106" text-anchor="middle" fill="rgba(238,243,255,.95)" font-size="12"
-                                font-weight="700">Mark Darcy</text>
+                            <circle cx="400" cy="100" r="42" fill="rgba(134,239,172,.18)" stroke="rgba(134,239,172,.75)" stroke-width="2" />
+                            <text x="400" y="97" text-anchor="middle" fill="rgba(238,243,255,.95)" font-size="11" font-weight="700">Mark</text>
+                            <text x="400" y="110" text-anchor="middle" fill="rgba(238,243,255,.95)" font-size="11" font-weight="700">Darcy</text>
 
-                            <circle cx="330" cy="230" r="50" fill="rgba(251,113,133,.12)" stroke="rgba(251,113,133,.65)"
-                                stroke-width="2" />
-                            <text x="330" y="236" text-anchor="middle" fill="rgba(238,243,255,.95)" font-size="12"
-                                font-weight="700">Daniel Cleaver</text>
+                            <circle cx="410" cy="220" r="42" fill="rgba(251,113,133,.12)" stroke="rgba(251,113,133,.45)" stroke-width="2" stroke-dasharray="4 3" />
+                            <text x="410" y="217" text-anchor="middle" fill="rgba(238,243,255,.6)" font-size="11" font-weight="700">Daniel</text>
+                            <text x="410" y="230" text-anchor="middle" fill="rgba(238,243,255,.6)" font-size="11" font-weight="700">Cleaver</text>
                         </g>
                     </svg>
-
-                    <div class="legend">
-                        <span class="pill">Bridget Jones ↔ Mark Darcy = match</span>
-                        <span class="pill warn">Asystentka Marka ⇒ Bridget Jones = (super)like jednostronny</span>
-                        <span class="pill bad">Daniel Cleaver — relacja przerywana (on/off)</span>
-                    </div>
                 </div>
 
                 <div class="card">
-                    <h3 style="margin:0 0 10px 0;">Interpretacja</h3>
-                    <ul>
-                        <li>Match: Bridget Jones i Mark Darcy mają krawędzie w obie strony (symetria).</li>
-                        <li>Asystentka Marka → Bridget Jones: jednostronna relacja (niesymetria).</li>
-                        <li>Daniel Cleaver: „krawędź przerywana” sugeruje niestabilność / ghosting / powroty.</li>
-                    </ul>
-                    <div class="note small">
-                        Ten slajd możesz łatwo rozszerzyć o Jacka Qwanta, Roxstera i Scotta —
-                        dokładnie tak, jak potrzebujecie w projekcie.
+                    <h3 style="margin:0 0 8px 0;">Przebieg (graf dynamiczny)</h3>
+                    <ol style="margin:0; padding-left:18px; font-size:15px; color:var(--muted); line-height:1.5;">
+                        <li><b>Start:</b> brak krawędzi</li>
+                        <li><span class="pill" style="font-size:11px;">Bridget → Daniel</span> like (krawędź jednostronna)</li>
+                        <li><span class="pill good" style="font-size:11px;">Daniel → Bridget</span> like ⇒ <b>match</b></li>
+                        <li><span class="pill bad" style="font-size:11px;">×</span> Daniel oszukuje — usunięcie krawędzi</li>
+                        <li><span class="pill" style="font-size:11px;">Bridget ↔ Mark</span> słaby like (brak matchu)</li>
+                        <li><span class="pill good" style="font-size:11px;">Bridget ↔ Mark</span> like w obie strony ⇒ <b>match</b></li>
+                        <li><b>Koniec:</b> stabilny match Bridget–Mark</li>
+                    </ol>
+                    <div class="note" style="margin-top:10px; padding:10px; font-size:13px;">
+                        👉 <b>Interpretacja:</b> krawędzie są dynamiczne — dodawane (like, match) i usuwane (zdrada). Zwycięża stabilny match.
                     </div>
                 </div>
             </div>
@@ -472,87 +444,65 @@
 
         <!-- SLIDE 5 -->
         <section class="slide">
-            <div class="kicker">🕸️ Ciąg grafów - Bridget Jones - akt III</div>
+            <div class="kicker">🕸️ Ciąg grafów - Bridget Jones - akt II</div>
             <h2>Bridget Jones: W pogoni za rozumem</h2>
-            <p class="small">
-                Poniżej: wierzchołki to postacie, strzałki to „like”. Match zaznaczamy jako dwukierunkowość.
-                Ghosting traktujemy jako zdarzenie w czasie (krawędź znika).
-            </p>
 
             <div class="grid">
                 <div class="card">
-                    <svg viewBox="0 0 520 300" role="img" aria-label="Mini graf relacji">
-                        <!-- nodes -->
+                    <svg viewBox="0 0 520 280" role="img" aria-label="Graf relacji - stan końcowy">
                         <defs>
-                            <filter id="glow">
+                            <filter id="glow5">
                                 <feGaussianBlur stdDeviation="3" result="coloredBlur" />
                                 <feMerge>
                                     <feMergeNode in="coloredBlur" />
                                     <feMergeNode in="SourceGraphic" />
                                 </feMerge>
                             </filter>
-                            <marker id="arrow" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto">
-                                <path d="M0,0 L10,3 L0,6 Z" fill="rgba(238,243,255,.75)"></path>
+                            <marker id="arrow5" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto">
+                                <path d="M0,0 L10,3 L0,6 Z" fill="rgba(134,239,172,.85)"></path>
                             </marker>
-                            <marker id="arrow2" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto">
-                                <path d="M0,0 L10,3 L0,6 Z" fill="rgba(110,231,255,.90)"></path>
+                            <marker id="arrow5w" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto">
+                                <path d="M0,0 L10,3 L0,6 Z" fill="rgba(253,230,138,.85)"></path>
                             </marker>
                         </defs>
 
-                        <!-- edges -->
-                        <path d="M120 150 C180 80, 260 80, 310 140" stroke="rgba(238,243,255,.70)" stroke-width="2.5"
-                            fill="none" marker-end="url(#arrow)" />
-                        <path d="M320 150 C260 220, 180 220, 130 160" stroke="rgba(238,243,255,.70)" stroke-width="2.5"
-                            fill="none" marker-end="url(#arrow)" />
-                        <!-- Bridget Jones -> Daniel Cleaver -->
-                        <path d="M120 150 C140 250, 240 270, 310 230" stroke="rgba(238,243,255,.45)" stroke-width="2.5"
-                            fill="none" marker-end="url(#arrow)" />
-                        <!-- Daniel Cleaver -> Bridget Jones (weak / on-off) -->
-                        <path d="M320 220 C260 160, 200 140, 140 150" stroke="rgba(251,113,133,.55)" stroke-width="2.5"
-                            fill="none" stroke-dasharray="6 6" marker-end="url(#arrow)" />
-                        <!-- Asystentka Marka -> Bridget Jones (like one-way) -->
-                        <path d="M260 60 C190 70, 150 100, 130 140" stroke="rgba(110,231,255,.85)" stroke-width="2.5"
-                            fill="none" marker-end="url(#arrow2)" />
+                        <!-- Match Bridget <-> Mark (stan końcowy - przywrócony) -->
+                        <path d="M140 145 C200 90, 300 70, 360 95" stroke="rgba(134,239,172,.85)" stroke-width="2.5"
+                            fill="none" marker-end="url(#arrow5)" />
+                        <path d="M360 125 C300 160, 200 175, 140 160" stroke="rgba(134,239,172,.85)" stroke-width="2.5"
+                            fill="none" marker-end="url(#arrow5)" />
+                        <!-- Rebecca Gillies -> Bridget (jednostronna, zazdrosna) -->
+                        <path d="M390 210 C300 180, 200 170, 140 155" stroke="rgba(253,230,138,.6)" stroke-width="2"
+                            fill="none" marker-end="url(#arrow5w)" />
 
                         <!-- nodes -->
-                        <g filter="url(#glow)">
-                            <circle cx="110" cy="150" r="50" fill="rgba(110,231,255,.18)" stroke="rgba(110,231,255,.75)"
-                                stroke-width="2" />
-                            <text x="110" y="156" text-anchor="middle" fill="rgba(238,243,255,.95)" font-size="12"
-                                font-weight="700">Bridget Jones</text>
+                        <g filter="url(#glow5)">
+                            <circle cx="95" cy="150" r="42" fill="rgba(110,231,255,.18)" stroke="rgba(110,231,255,.75)" stroke-width="2" />
+                            <text x="95" y="147" text-anchor="middle" fill="rgba(238,243,255,.95)" font-size="11" font-weight="700">Bridget</text>
+                            <text x="95" y="160" text-anchor="middle" fill="rgba(238,243,255,.95)" font-size="11" font-weight="700">Jones</text>
 
-                            <circle cx="330" cy="150" r="50" fill="rgba(167,139,250,.18)" stroke="rgba(167,139,250,.75)"
-                                stroke-width="2" />
-                            <text x="330" y="156" text-anchor="middle" fill="rgba(238,243,255,.95)" font-size="12"
-                                font-weight="700">Mark Darcy</text>
+                            <circle cx="400" cy="105" r="42" fill="rgba(134,239,172,.18)" stroke="rgba(134,239,172,.75)" stroke-width="2" />
+                            <text x="400" y="102" text-anchor="middle" fill="rgba(238,243,255,.95)" font-size="11" font-weight="700">Mark</text>
+                            <text x="400" y="115" text-anchor="middle" fill="rgba(238,243,255,.95)" font-size="11" font-weight="700">Darcy</text>
 
-                            <circle cx="330" cy="230" r="50" fill="rgba(251,113,133,.12)" stroke="rgba(251,113,133,.65)"
-                                stroke-width="2" />
-                            <text x="330" y="236" text-anchor="middle" fill="rgba(238,243,255,.95)" font-size="12"
-                                font-weight="700">Daniel Cleaver</text>
-
-                            <circle cx="260" cy="60" r="24" fill="rgba(110,231,255,.10)" stroke="rgba(110,231,255,.55)"
-                                stroke-width="2" />
-                            <text x="260" y="66" text-anchor="middle" fill="rgba(238,243,255,.92)" font-size="12"
-                                font-weight="700">Asystentka Marka</text>
+                            <circle cx="420" cy="220" r="42" fill="rgba(253,230,138,.12)" stroke="rgba(253,230,138,.55)" stroke-width="2" />
+                            <text x="420" y="225" text-anchor="middle" fill="rgba(238,243,255,.85)" font-size="11" font-weight="700">Rebecca Gillies</text>
                         </g>
                     </svg>
-
-                    <div class="legend">
-                        <span class="pill">Bridget Jones ↔ Mark Darcy = match</span>
-                        <span class="pill bad">Daniel Cleaver — relacja przerywana (on/off)</span>
-                    </div>
                 </div>
 
                 <div class="card">
-                    <h3 style="margin:0 0 10px 0;">Interpretacja</h3>
-                    <ul>
-                        <li>Match: Bridget Jones i Mark Darcy mają krawędzie w obie strony (symetria).</li>
-                        <li>Daniel Cleaver: „krawędź przerywana” sugeruje niestabilność / ghosting / powroty.</li>
-                    </ul>
-                    <div class="note small">
-                        Ten slajd możesz łatwo rozszerzyć o Jacka Qwanta, Roxstera McDuffa i Scotta —
-                        dokładnie tak, jak potrzebujecie w projekcie.
+                    <h3 style="margin:0 0 8px 0;">Przebieg (graf dynamiczny)</h3>
+                    <ol style="margin:0; padding-left:18px; font-size:15px; color:var(--muted); line-height:1.5;">
+                        <li><b>Start:</b> <span class="pill good" style="font-size:11px;">Bridget ↔ Mark</span> = match</li>
+                        <li><span class="pill warn" style="font-size:11px;">Rebecca Gillies → Bridget</span> like (jednostronne)</li>
+                        <li>Bridget → Rebecca Gillies: <b>brak like</b> (brak matchu)</li>
+                        <li><span class="pill bad" style="font-size:11px;">×</span> Bridget podejrzewa Mark ↔ Rebecca Gillies — <b>kryzys</b> (tymczasowe usunięcie krawędzi)</li>
+                        <li><span class="pill good" style="font-size:11px;">✓</span> Wyjaśnienie nieporozumień — ponowne dodanie krawędzi</li>
+                        <li><b>Koniec:</b> stabilny match Bridget–Mark</li>
+                    </ol>
+                    <div class="note" style="margin-top:10px; padding:10px; font-size:13px;">
+                        👉 <b>Interpretacja:</b> fałszywa inferencja o krawędzi Mark–Rebecca Gillies powoduje chwilowe rozłączenie głównego matchu; po korekcie danych graf wraca do stabilnego stanu.
                     </div>
                 </div>
             </div>
@@ -567,78 +517,65 @@
 
         <!-- SLIDE 6 -->
         <section class="slide">
-            <div class="kicker">🕸️ Ciąg grafów - Bridget Jones - akt II</div>
-            <h2>Bridget Jones 3</h2>
-            <p class="small">
-                Poniżej: wierzchołki to postacie, strzałki to „like”. Match zaznaczamy jako dwukierunkowość.
-                Ghosting traktujemy jako zdarzenie w czasie (krawędź znika).
-            </p>
+            <div class="kicker">🕸️ Ciąg grafów - Bridget Jones - akt III</div>
+            <h2>Bridget Jones Baby</h2>
 
             <div class="grid">
                 <div class="card">
-                    <svg viewBox="0 0 520 300" role="img" aria-label="Mini graf relacji">
-                        <!-- nodes -->
+                    <svg viewBox="0 0 520 280" role="img" aria-label="Graf relacji - stan końcowy">
                         <defs>
-                            <filter id="glow">
+                            <filter id="glow6">
                                 <feGaussianBlur stdDeviation="3" result="coloredBlur" />
                                 <feMerge>
                                     <feMergeNode in="coloredBlur" />
                                     <feMergeNode in="SourceGraphic" />
                                 </feMerge>
                             </filter>
-                            <marker id="arrow" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto">
-                                <path d="M0,0 L10,3 L0,6 Z" fill="rgba(238,243,255,.75)"></path>
-                            </marker>
-                            <marker id="arrow2" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto">
-                                <path d="M0,0 L10,3 L0,6 Z" fill="rgba(110,231,255,.90)"></path>
+                            <marker id="arrow6" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto">
+                                <path d="M0,0 L10,3 L0,6 Z" fill="rgba(134,239,172,.85)"></path>
                             </marker>
                         </defs>
 
-                        <!-- edges -->
-                        <path d="M120 150 C180 80, 260 80, 310 140" stroke="rgba(238,243,255,.70)" stroke-width="2.5"
-                            fill="none" marker-end="url(#arrow)" />
-                        <path d="M320 150 C260 220, 180 220, 130 160" stroke="rgba(238,243,255,.70)" stroke-width="2.5"
-                            fill="none" marker-end="url(#arrow)" />
-                        <!-- Bridget Jones -> Jack Qwant -->
-                        <path d="M120 150 C140 250, 240 270, 310 230" stroke="rgba(238,243,255,.45)" stroke-width="2.5"
-                            fill="none" marker-end="url(#arrow)" />
-                        <!-- Jack Qwant -> Bridget Jones (weak / on-off) -->
-                        <path d="M320 220 C260 160, 200 140, 140 150" stroke="rgba(251,113,133,.55)" stroke-width="2.5"
-                            fill="none" stroke-dasharray="6 6" marker-end="url(#arrow)" />
+                        <!-- Match Bridget <-> Mark (stan końcowy - trwały) -->
+                        <path d="M145 140 C200 80, 300 60, 355 90" stroke="rgba(134,239,172,.85)" stroke-width="2.5"
+                            fill="none" marker-end="url(#arrow6)" />
+                        <path d="M355 120 C300 160, 200 170, 145 150" stroke="rgba(134,239,172,.85)" stroke-width="2.5"
+                            fill="none" marker-end="url(#arrow6)" />
+                        <!-- Usunięta krawędź Jack (przekreślona) -->
+                        <path d="M145 160 C180 210, 300 240, 370 220" stroke="rgba(251,113,133,.35)" stroke-width="2"
+                            fill="none" stroke-dasharray="8 6" />
+                        
 
                         <!-- nodes -->
-                        <g filter="url(#glow)">
-                            <circle cx="110" cy="150" r="50" fill="rgba(110,231,255,.18)" stroke="rgba(110,231,255,.75)"
-                                stroke-width="2" />
-                            <text x="110" y="156" text-anchor="middle" fill="rgba(238,243,255,.95)" font-size="12"
-                                font-weight="700">Bridget Jones</text>
+                        <g filter="url(#glow6)">
+                            <circle cx="100" cy="145" r="42" fill="rgba(110,231,255,.18)" stroke="rgba(110,231,255,.75)" stroke-width="2" />
+                            <text x="100" y="142" text-anchor="middle" fill="rgba(238,243,255,.95)" font-size="11" font-weight="700">Bridget</text>
+                            <text x="100" y="155" text-anchor="middle" fill="rgba(238,243,255,.95)" font-size="11" font-weight="700">Jones</text>
 
-                            <circle cx="330" cy="150" r="50" fill="rgba(167,139,250,.18)" stroke="rgba(167,139,250,.75)"
-                                stroke-width="2" />
-                            <text x="330" y="156" text-anchor="middle" fill="rgba(238,243,255,.95)" font-size="12"
-                                font-weight="700">Mark Darcy</text>
+                            <circle cx="400" cy="100" r="42" fill="rgba(134,239,172,.18)" stroke="rgba(134,239,172,.75)" stroke-width="2" />
+                            <text x="400" y="97" text-anchor="middle" fill="rgba(238,243,255,.95)" font-size="11" font-weight="700">Mark</text>
+                            <text x="400" y="110" text-anchor="middle" fill="rgba(238,243,255,.95)" font-size="11" font-weight="700">Darcy</text>
 
-                            <circle cx="330" cy="230" r="50" fill="rgba(251,113,133,.12)" stroke="rgba(251,113,133,.65)"
-                                stroke-width="2" />
-                            <text x="330" y="236" text-anchor="middle" fill="rgba(238,243,255,.95)" font-size="12"
-                                font-weight="700">Jack Qwant</text>
-
-                            <!-- Asystentka removed from this slide -->
+                            <circle cx="410" cy="220" r="42" fill="rgba(251,113,133,.12)" stroke="rgba(251,113,133,.45)" stroke-width="2" stroke-dasharray="4 3" />
+                            <text x="410" y="217" text-anchor="middle" fill="rgba(238,243,255,.6)" font-size="11" font-weight="700">Jack</text>
+                            <text x="410" y="230" text-anchor="middle" fill="rgba(238,243,255,.6)" font-size="11" font-weight="700">Qwant</text>
                         </g>
                     </svg>
-
-                    <div class="legend">
-                        <span class="pill">Bridget Jones ↔ Mark Darcy = match</span>
-                        <span class="pill bad">Jack Qwant ↔ relacja = match</span>
-                    </div>
                 </div>
 
                 <div class="card">
-                    <h3 style="margin:0 0 10px 0;">Interpretacja</h3>
-                    <ul>
-                        <li>Match: Bridget Jones i Mark Darcy mają krawędzie w obie strony (symetria).</li>
-                        <li>Match: Bridget Jones i Jack Qwant mają krawędzie w obie strony (symetria).</li>
-                    </ul>
+                    <h3 style="margin:0 0 8px 0;">Przebieg (graf dynamiczny)</h3>
+                    <ol style="margin:0; padding-left:18px; font-size:15px; color:var(--muted); line-height:1.5;">
+                        <li><b>Start:</b> brak krawędzi romantycznych (Bridget singiel)</li>
+                        <li><span class="pill good" style="font-size:11px;">Bridget ↔ Jack</span> like ⇒ szybki <b>match</b></li>
+                        <li><span class="pill good" style="font-size:11px;">Bridget ↔ Mark</span> ponowny like ⇒ <b>match</b></li>
+                        <li><span class="pill warn" style="font-size:11px;">?</span> Ciąża — brak wiedzy o ojcu: <b>graf niespójny</b> (dwa równoległe match'e)</li>
+                        <li><span class="pill bad" style="font-size:11px;">DNA</span> Test DNA: usunięcie krawędzi Bridget–Jack</li>
+                        <li><b>Finał:</b> stabilny match Bridget–Mark</li>
+                    </ol>
+                    <div class="note" style="margin-top:10px; padding:10px; font-size:13px;">
+                        👉 <b>Interpretacja:</b> konflikt konkurencyjnych matchy rozwiązany przez nową informację (test DNA), która redukuje graf do jednego stabilnego połączenia.
+                    </div>
                 </div>
             </div>
 
@@ -653,81 +590,64 @@
         <!-- SLIDE 7 -->
         <section class="slide">
             <div class="kicker">🕸️ Ciąg grafów - Bridget Jones - akt IV</div>
-            <h2>Bridget Jones: Szalejąc za facetem</h2>
-            <p class="small">
-                Poniżej: wierzchołki to postacie, strzałki to „like”. Match zaznaczamy jako dwukierunkowość.
-                Ghosting traktujemy jako zdarzenie w czasie (krawędź znika).
-            </p>
+            <h2>Bridget Jones: Mad About the Boy</h2>
 
             <div class="grid">
                 <div class="card">
-                    <svg viewBox="0 0 520 300" role="img" aria-label="Mini graf relacji">
-                        <!-- nodes -->
+                    <svg viewBox="0 0 520 280" role="img" aria-label="Graf relacji - stan końcowy">
                         <defs>
-                            <filter id="glow">
+                            <filter id="glow7">
                                 <feGaussianBlur stdDeviation="3" result="coloredBlur" />
                                 <feMerge>
                                     <feMergeNode in="coloredBlur" />
                                     <feMergeNode in="SourceGraphic" />
                                 </feMerge>
                             </filter>
-                            <marker id="arrow" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto">
-                                <path d="M0,0 L10,3 L0,6 Z" fill="rgba(238,243,255,.75)"></path>
-                            </marker>
-                            <marker id="arrow2" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto">
-                                <path d="M0,0 L10,3 L0,6 Z" fill="rgba(110,231,255,.90)"></path>
+                            <marker id="arrow7" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto">
+                                <path d="M0,0 L10,3 L0,6 Z" fill="rgba(134,239,172,.85)"></path>
                             </marker>
                         </defs>
 
-                        <!-- edges -->
-                        <path d="M120 150 C180 80, 260 80, 310 140" stroke="rgba(238,243,255,.70)" stroke-width="2.5"
-                            fill="none" marker-end="url(#arrow)" />
-                        <path d="M320 150 C260 220, 180 220, 130 160" stroke="rgba(238,243,255,.70)" stroke-width="2.5"
-                            fill="none" marker-end="url(#arrow)" />
-                        <!-- Bridget Jones -> Roxter McDuff -->
-                        <path d="M120 150 C140 250, 240 270, 310 230" stroke="rgba(238,243,255,.45)" stroke-width="2.5"
-                            fill="none" marker-end="url(#arrow)" />
-                        <!-- Roxter McDuff -> Bridget Jones (weak / on-off) -->
-                        <path d="M320 220 C260 160, 200 140, 140 150" stroke="rgba(251,113,133,.55)" stroke-width="2.5"
-                            fill="none" stroke-dasharray="6 6" marker-end="url(#arrow)" />
-                        <!-- Bridget Jones -> Scott -->
-                        <path d="M120 150 C130 260, 230 280, 310 230" stroke="rgba(238,243,255,.45)" stroke-width="2.5"
-                            fill="none" marker-end="url(#arrow)" />
+                        <!-- Match Bridget <-> Scott (stan końcowy) -->
+                        <path d="M140 150 C180 100, 280 85, 340 100" stroke="rgba(134,239,172,.85)" stroke-width="2.5"
+                            fill="none" marker-end="url(#arrow7)" />
+                        <path d="M340 130 C280 150, 180 160, 140 165" stroke="rgba(134,239,172,.85)" stroke-width="2.5"
+                            fill="none" marker-end="url(#arrow7)" />
+                        <!-- Usunięta krawędź Roxster (przekreślona - ghosting) -->
+                        <path d="M140 175 C170 220, 260 250, 330 235" stroke="rgba(251,113,133,.35)" stroke-width="2"
+                            fill="none" stroke-dasharray="8 6" />
+                        <!-- Mark - usunięty wierzchołek (cień) -->
+                        <circle cx="260" cy="45" r="30" fill="none" stroke="rgba(167,139,250,.25)" stroke-width="2" stroke-dasharray="5 5" />
+                        <text x="260" y="42" text-anchor="middle" fill="rgba(238,243,255,.35)" font-size="10" font-weight="700">Mark</text>
+                        <text x="260" y="54" text-anchor="middle" fill="rgba(238,243,255,.35)" font-size="10" font-weight="700">Darcy †</text>
 
                         <!-- nodes -->
-                        <g filter="url(#glow)">
-                            <circle cx="110" cy="150" r="50" fill="rgba(110,231,255,.18)" stroke="rgba(110,231,255,.75)"
-                                stroke-width="2" />
-                            <text x="110" y="156" text-anchor="middle" fill="rgba(238,243,255,.95)" font-size="12"
-                                font-weight="700">Bridget Jones</text>
+                        <g filter="url(#glow7)">
+                            <circle cx="95" cy="160" r="40" fill="rgba(110,231,255,.18)" stroke="rgba(110,231,255,.75)" stroke-width="2" />
+                            <text x="95" y="157" text-anchor="middle" fill="rgba(238,243,255,.95)" font-size="11" font-weight="700">Bridget</text>
+                            <text x="95" y="170" text-anchor="middle" fill="rgba(238,243,255,.95)" font-size="11" font-weight="700">Jones</text>
 
-                            <circle cx="330" cy="150" r="50" fill="rgba(167,139,250,.18)" stroke="rgba(167,139,250,.75)"
-                                stroke-width="2" />
-                            <text x="330" y="156" text-anchor="middle" fill="rgba(238,243,255,.95)" font-size="12"
-                                font-weight="700">Scott</text>
+                            <circle cx="385" cy="110" r="40" fill="rgba(134,239,172,.18)" stroke="rgba(134,239,172,.75)" stroke-width="2" />
+                            <text x="385" y="107" text-anchor="middle" fill="rgba(238,243,255,.95)" font-size="11" font-weight="700">Scott</text>
+                            <text x="385" y="120" text-anchor="middle" fill="rgba(238,243,255,.95)" font-size="11" font-weight="700">Wallaker</text>
 
-                            <circle cx="330" cy="230" r="50" fill="rgba(251,113,133,.12)" stroke="rgba(251,113,133,.65)"
-                                stroke-width="2" />
-                            <text x="330" y="236" text-anchor="middle" fill="rgba(238,243,255,.95)" font-size="12"
-                                font-weight="700">Roxter McDuff</text>
+                            <circle cx="380" cy="235" r="40" fill="rgba(251,113,133,.12)" stroke="rgba(251,113,133,.45)" stroke-width="2" stroke-dasharray="4 3" />
+                            <text x="380" y="235" text-anchor="middle" fill="rgba(238,243,255,.6)" font-size="11" font-weight="700">Roxster</text>
                         </g>
                     </svg>
-
-                    <div class="legend">
-                        <span class="pill">Bridget Jones ↔ Mark Darcy = match</span>
-                        <span class="pill bad">Daniel Cleaver — relacja przerywana (on/off)</span>
-                    </div>
                 </div>
 
                 <div class="card">
-                    <h3 style="margin:0 0 10px 0;">Interpretacja</h3>
-                    <ul>
-                        <li>Match: Bridget Jones i Mark Darcy mają krawędzie w obie strony (symetria).</li>
-                        <li>Daniel Cleaver: „krawędź przerywana” sugeruje niestabilność / ghosting / powroty.</li>
-                    </ul>
-                    <div class="note small">
-                        Ten slajd możesz łatwo rozszerzyć o Jacka Qwanta, Roxstera i Scotta —
-                        dokładnie tak, jak potrzebujecie w projekcie.
+                    <h3 style="margin:0 0 8px 0;">Przebieg (graf dynamiczny)</h3>
+                    <ol style="margin:0; padding-left:18px; font-size:15px; color:var(--muted); line-height:1.5;">
+                        <li><b>Start:</b> usunięcie wierzchołka Mark <span class="pill bad" style="font-size:11px;">†</span> (śmierć) — graf się redukuje</li>
+                        <li><span class="pill good" style="font-size:11px;">Bridget ↔ Roxster</span> like ⇒ <b>match</b></li>
+                        <li><span class="pill bad" style="font-size:11px;">👻</span> Roxster <b>ghostuje</b> — usunięcie krawędzi</li>
+                        <li><span class="pill good" style="font-size:11px;">Bridget ↔ Scott</span> like ⇒ <b>match</b></li>
+                        <li><b>Koniec:</b> stabilny match Bridget–Scott</li>
+                    </ol>
+                    <div class="note" style="margin-top:10px; padding:10px; font-size:13px;">
+                        👉 <b>Interpretacja:</b> utrata kluczowego wierzchołka wymusza rekonstrukcję grafu; relacja przejściowa (ghosting) zostaje odfiltrowana, a graf dąży do nowej stabilnej konfiguracji.
                     </div>
                 </div>
             </div>
@@ -764,14 +684,10 @@
                 <div class="card">
                     <h3 style="margin:0 0 10px 0;">Dlaczego to ciekawe?</h3>
                     <ul>
-                        <li>Możemy analizować „stabilność” relacji jako trwałość krawędzi.</li>
+                        <li>Możemy analizować „stabilność" relacji jako trwałość krawędzi.</li>
                         <li>Możemy liczyć stopnie wierzchołków (kto ma najwięcej interakcji).</li>
                         <li>Możemy zadać pytania: kiedy graf staje się spójny? kiedy się rozpada?</li>
                     </ul>
-                    <div class="note small">
-                        Bonus na zajęcia: prosta ankieta „co jest relacją symetryczną, a co nie?”
-                        i rysowanie mini-grafów przez grupę.
-                    </div>
                 </div>
             </div>
 
@@ -786,26 +702,18 @@
         <!-- SLIDE 9 -->
         <section class="slide">
             <div class="kicker">✅ Finał</div>
-            <h2>Podsumowanie (do powiedzenia na głos)</h2>
+            <h2>Podsumowanie</h2>
             <div class="card">
                 <ul>
                     <li>Like to relacja skierowana: zwykle nie jest symetryczna 🥲</li>
-                    <li>Match to symetria: dwie krawędzie w przeciwnych kierunkach.</li>
+                    <li>Match można przedstawić jako nieskierowaną, ale powstaje wtedy i tylko wtedy, dwie przeciwnie skierowane krawędzie Like.</li>
                     <li>Superlike można modelować wagą lub innym typem krawędzi.</li>
                     <li>Ghosting i powroty pokazują, że graf jest dynamiczny: G(t).</li>
                 </ul>
             </div>
 
-            <div class="note">
-                <p class="small" style="margin:0;">
-                    Jeśli chcesz, dopasuję slajdy pod dokładną listę postaci: Mark Darcy, Daniel Cleaver, Jack Qwant,
-                    Roxster, Scott —
-                    i zrobię spójne oznaczenia (kolory/typy krawędzi) pod Wasz finalny „graf Bridget”.
-                </p>
-            </div>
-
             <div class="footer">
-                <div>Slajd 6</div>
+                <div>Slajd 9</div>
                 <div class="progress">
                     <div class="bar" data-bar></div>
                 </div>
