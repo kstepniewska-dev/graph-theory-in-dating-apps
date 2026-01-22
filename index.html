@@ -7,7 +7,7 @@
     <meta name="description" content="Prezentacja o teorii grafów w aplikacjach randkowych na przykładzie Bridget Jones" />
     <meta name="theme-color" content="#0b0f1a" />
     <meta name="color-scheme" content="dark" />
-    <title>Teoria grafów w aplikacjach randkowych — moja część</title>
+    <title>Teoria grafów w aplikacjach randkowych</title>
     <style>
         :root {
             --bg: #0b0f1a;
@@ -222,11 +222,18 @@
             margin-bottom: 8px;
             user-select: none;
             white-space: nowrap;
-            transition: transform 0.15s ease, box-shadow 0.15s ease;
+            transition: transform 0.15s ease, box-shadow 0.15s ease, background 0.2s ease, border-color 0.2s ease;
+            cursor: pointer;
         }
 
         .pill:hover {
             transform: scale(1.03);
+        }
+
+        .pill.active {
+            box-shadow: 0 0 0 2px rgba(110, 231, 255, .35);
+            background: rgba(110, 231, 255, .14);
+            border-color: rgba(110, 231, 255, .55);
         }
 
         .pill.good {
@@ -365,6 +372,17 @@
         /* Ensure SVG text is accessible */
         svg text {
             pointer-events: none;
+        }
+
+        /* Interactive edges */
+        .edge-hidden {
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .edge-visible {
+            opacity: 1;
+            transition: opacity 0.25s ease;
         }
 
         .legend {
@@ -623,9 +641,9 @@
             <h2>Użytkownicy jako wierzchołki, relacje jako krawędzie</h2>
             <div class="two">
                 <div class="card">
-                    <p><span class="pill">Użytkownik</span> wierzchołek to osoba (np. Bridget Jones, Mark Darcy…)</p>
-                    <p><span class="pill">Like</span> krawędź skierowana, czyli akcja: Bridget polubiła Marka</p>
-                    <p><span class="pill good">Match</span> krawędź nieskierowana, która powstanie wtedy i tylko wtedy, gdy zaistnieją dwa polubienia: Bridget→Mark oraz Mark→Bridget</p>
+                    <p><span class="pill">Osoba</span> to wierzchołek (np. Bridget Jones, Mark Darcy…)</p>
+                    <p><span class="pill">Like</span> to krawędź skierowana, akcja: Bridget polubiła Marka</p>
+                    <p><span class="pill good">Match</span> to krawędź nieskierowana, która powstanie wtedy i tylko wtedy, gdy zaistnieją dwa polubienia: Bridget→Mark oraz Mark→Bridget</p>
                     <p><span class="pill warn">Superlike</span> to inny typ krawędzi skierowanej (o większej wadze)</p>
                     <p><span class="pill bad">Ghosting</span> przerwanie relacji w czasie (krawędź znika)</p>
                 </div>
@@ -659,6 +677,7 @@
                         <li><b>Like</b> nie jest <b>zwrotny</b>, bo nie można dać <b>like</b>'a samemu sobie, nie jest również <b>symetryczny</b>: A→B nie wymusza B→A.</li>
                         <li><b>Match</b> również nie jest <b>zwrotny</b>, ale tworzy relację <b>symetryczną</b> (w praktyce: krawędź nieskierowana).</li>
                         <li><b>Superlike</b> może być traktowany jako <b>like</b> o większej wadze.</li>
+                        <li><b>Czy relacje na Tinderze mogą być przechodnie?</b></li>
                     </ul>
                 </div>
 
@@ -688,7 +707,7 @@
 
             <div class="grid">
                 <div class="card">
-                    <svg viewBox="0 0 520 280" role="img" aria-label="Graf relacji - stan końcowy">
+                    <svg viewBox="0 0 520 280" role="img" aria-label="Graf relacji">
                         <defs>
                             <filter id="glow4">
                                 <feGaussianBlur stdDeviation="3" result="coloredBlur" />
@@ -702,14 +721,18 @@
                             </marker>
                         </defs>
 
-                        <!-- Match Bridget <-> Mark (stan końcowy) -->
-                        <path d="M145 140 C200 80, 300 60, 355 90" stroke="rgba(134,239,172,.85)" stroke-width="2.5"
+                        <!-- Bridget -> Mark -->
+                        <path data-edge-id="edge4-bm" class="edge-hidden" d="M145 140 C200 80, 300 60, 355 90" stroke="rgba(134,239,172,.85)" stroke-width="2.5"
                             fill="none" marker-end="url(#arrow4)" />
-                        <path d="M355 120 C300 160, 200 170, 145 150" stroke="rgba(134,239,172,.85)" stroke-width="2.5"
+                        <!-- Mark -> Bridget -->
+                        <path data-edge-id="edge4-mb" class="edge-hidden" d="M355 120 C300 160, 200 170, 145 150" stroke="rgba(134,239,172,.85)" stroke-width="2.5"
                             fill="none" marker-end="url(#arrow4)" />
-                        <!-- Usunięta krawędź Daniel (przekreślona) -->
-                        <path d="M145 160 C180 210, 300 240, 370 220" stroke="rgba(251,113,133,.35)" stroke-width="2"
-                            fill="none" stroke-dasharray="8 6" />
+                        <!-- Bridget -> Daniel (like) -->
+                        <path data-edge-id="edge4-bd" class="edge-hidden" d="M145 160 C180 210, 300 240, 370 220" stroke="rgba(110,231,255,.75)" stroke-width="2.3"
+                            fill="none" marker-end="url(#arrow4)" />
+                        <!-- Daniel -> Bridget (match druga strona) -->
+                        <path data-edge-id="edge4-db" class="edge-hidden" d="M370 200 C300 180, 220 160, 140 150" stroke="rgba(110,231,255,.75)" stroke-width="2.3"
+                            fill="none" marker-end="url(#arrow4)" />
 
                         <!-- nodes -->
                         <g filter="url(#glow4)">
@@ -721,7 +744,7 @@
                             <text x="400" y="97" text-anchor="middle" fill="rgba(238,243,255,.95)" font-size="11" font-weight="700">Mark</text>
                             <text x="400" y="110" text-anchor="middle" fill="rgba(238,243,255,.95)" font-size="11" font-weight="700">Darcy</text>
 
-                            <circle cx="410" cy="220" r="42" fill="rgba(251,113,133,.12)" stroke="rgba(251,113,133,.45)" stroke-width="2" stroke-dasharray="4 3" />
+                            <circle cx="410" cy="220" r="42" fill="rgba(251,113,133,.12)" stroke="rgba(251,113,133,.45)" stroke-width="2" />
                             <text x="410" y="217" text-anchor="middle" fill="rgba(238,243,255,.6)" font-size="11" font-weight="700">Daniel</text>
                             <text x="410" y="230" text-anchor="middle" fill="rgba(238,243,255,.6)" font-size="11" font-weight="700">Cleaver</text>
                         </g>
@@ -732,11 +755,11 @@
                     <h3 style="margin:0 0 8px 0;">Przebieg (graf dynamiczny)</h3>
                     <ol style="margin:0; padding-left:18px; font-size:15px; color:var(--muted); line-height:1.5;">
                         <li><b>Start:</b> brak krawędzi</li>
-                        <li><span class="pill" style="font-size:11px;">Bridget → Daniel</span> like (krawędź jednostronna)</li>
-                        <li><span class="pill good" style="font-size:11px;">Daniel → Bridget</span> like ⇒ <b>match</b></li>
-                        <li><span class="pill bad" style="font-size:11px;">×</span> Daniel oszukuje — usunięcie krawędzi</li>
-                        <li><span class="pill" style="font-size:11px;">Bridget ↔ Mark</span> słaby like (brak matchu)</li>
-                        <li><span class="pill good" style="font-size:11px;">Bridget ↔ Mark</span> like w obie strony ⇒ <b>match</b></li>
+                        <li><span class="pill" data-edge-target="edge4-bd" style="font-size:11px;">Bridget → Daniel</span> like (krawędź jednostronna)</li>
+                        <li><span class="pill good" data-edge-target="edge4-db" style="font-size:11px;">Daniel → Bridget</span> like ⇒ <b>match</b></li>
+                        <li><span class="pill bad" data-edge-target="edge4-daniel-ghost edge4-bd edge4-db" style="font-size:11px;">×</span> Daniel oszukuje — usunięcie krawędzi</li>
+                        <li><span class="pill" data-edge-target="edge4-bm" style="font-size:11px;">Bridget ↔ Mark</span> słaby like (brak matchu)</li>
+                        <li><span class="pill good" data-edge-target="edge4-bm edge4-mb" style="font-size:11px;">Bridget ↔ Mark</span> like w obie strony ⇒ <b>match</b></li>
                         <li><b>Koniec:</b> stabilny match Bridget–Mark</li>
                     </ol>
                     <div class="note" style="margin-top:10px; padding:10px; font-size:13px;">
@@ -760,7 +783,7 @@
 
             <div class="grid">
                 <div class="card">
-                    <svg viewBox="0 0 520 280" role="img" aria-label="Graf relacji - stan końcowy">
+                    <svg viewBox="0 0 520 280" role="img" aria-label="Graf relacji">
                         <defs>
                             <filter id="glow5">
                                 <feGaussianBlur stdDeviation="3" result="coloredBlur" />
@@ -778,12 +801,12 @@
                         </defs>
 
                         <!-- Match Bridget <-> Mark (stan końcowy - przywrócony) -->
-                        <path d="M140 145 C200 90, 300 70, 360 95" stroke="rgba(134,239,172,.85)" stroke-width="2.5"
+                        <path data-edge-id="edge5-bm" class="edge-hidden" d="M140 145 C200 90, 300 70, 360 95" stroke="rgba(134,239,172,.85)" stroke-width="2.5"
                             fill="none" marker-end="url(#arrow5)" />
-                        <path d="M360 125 C300 160, 200 175, 140 160" stroke="rgba(134,239,172,.85)" stroke-width="2.5"
+                        <path data-edge-id="edge5-mb" class="edge-hidden" d="M360 125 C300 160, 200 175, 140 160" stroke="rgba(134,239,172,.85)" stroke-width="2.5"
                             fill="none" marker-end="url(#arrow5)" />
                         <!-- Rebecca Gillies -> Bridget (jednostronna, zazdrosna) -->
-                        <path d="M390 210 C300 180, 200 170, 140 155" stroke="rgba(253,230,138,.6)" stroke-width="2"
+                        <path data-edge-id="edge5-rb" class="edge-hidden" d="M390 210 C300 180, 200 170, 140 155" stroke="rgba(253,230,138,.6)" stroke-width="2"
                             fill="none" marker-end="url(#arrow5w)" />
 
                         <!-- nodes -->
@@ -805,11 +828,11 @@
                 <div class="card">
                     <h3 style="margin:0 0 8px 0;">Przebieg (graf dynamiczny)</h3>
                     <ol style="margin:0; padding-left:18px; font-size:15px; color:var(--muted); line-height:1.5;">
-                        <li><b>Start:</b> <span class="pill good" style="font-size:11px;">Bridget ↔ Mark</span> = match</li>
-                        <li><span class="pill warn" style="font-size:11px;">Rebecca Gillies → Bridget</span> like (jednostronne)</li>
+                        <li><b>Start:</b> <span class="pill good" data-edge-target="edge5-bm edge5-mb" style="font-size:11px;">Bridget ↔ Mark</span> = match</li>
+                        <li><span class="pill warn" data-edge-target="edge5-rb" style="font-size:11px;">Rebecca Gillies → Bridget</span> like (jednostronne)</li>
                         <li>Bridget → Rebecca Gillies: <b>brak like</b> (brak matchu)</li>
-                        <li><span class="pill bad" style="font-size:11px;">×</span> Bridget podejrzewa Mark ↔ Rebecca Gillies — <b>kryzys</b> (tymczasowe usunięcie krawędzi)</li>
-                        <li><span class="pill good" style="font-size:11px;">✓</span> Wyjaśnienie nieporozumień — ponowne dodanie krawędzi</li>
+                        <li><span class="pill bad" data-edge-target="edge5-bm edge5-mb" style="font-size:11px;">×</span> Bridget podejrzewa Mark ↔ Rebecca Gillies — <b>kryzys</b> (tymczasowe usunięcie krawędzi)</li>
+                        <li><span class="pill good" data-edge-target="edge5-bm edge5-mb" style="font-size:11px;">✓</span> Wyjaśnienie nieporozumień — ponowne dodanie krawędzi</li>
                         <li><b>Koniec:</b> stabilny match Bridget–Mark</li>
                     </ol>
                     <div class="note" style="margin-top:10px; padding:10px; font-size:13px;">
@@ -833,7 +856,7 @@
 
             <div class="grid">
                 <div class="card">
-                    <svg viewBox="0 0 520 280" role="img" aria-label="Graf relacji - stan końcowy">
+                    <svg viewBox="0 0 520 280" role="img" aria-label="Graf relacji">
                         <defs>
                             <filter id="glow6">
                                 <feGaussianBlur stdDeviation="3" result="coloredBlur" />
@@ -848,12 +871,17 @@
                         </defs>
 
                         <!-- Match Bridget <-> Mark (stan końcowy - trwały) -->
-                        <path d="M145 140 C200 80, 300 60, 355 90" stroke="rgba(134,239,172,.85)" stroke-width="2.5"
+                        <path data-edge-id="edge6-bm" class="edge-hidden" d="M145 140 C200 80, 300 60, 355 90" stroke="rgba(134,239,172,.85)" stroke-width="2.5"
                             fill="none" marker-end="url(#arrow6)" />
-                        <path d="M355 120 C300 160, 200 170, 145 150" stroke="rgba(134,239,172,.85)" stroke-width="2.5"
+                        <path data-edge-id="edge6-mb" class="edge-hidden" d="M355 120 C300 160, 200 170, 145 150" stroke="rgba(134,239,172,.85)" stroke-width="2.5"
+                            fill="none" marker-end="url(#arrow6)" />
+                        <!-- Bridget <-> Jack (match) -->
+                        <path data-edge-id="edge6-bj" class="edge-hidden" d="M145 165 C200 210, 300 230, 370 210" stroke="rgba(134,239,172,.65)" stroke-width="2.3"
+                            fill="none" marker-end="url(#arrow6)" />
+                        <path data-edge-id="edge6-jb" class="edge-hidden" d="M370 190 C300 180, 200 165, 145 155" stroke="rgba(134,239,172,.65)" stroke-width="2.3"
                             fill="none" marker-end="url(#arrow6)" />
                         <!-- Usunięta krawędź Jack (przekreślona) -->
-                        <path d="M145 160 C180 210, 300 240, 370 220" stroke="rgba(251,113,133,.35)" stroke-width="2"
+                        <path data-edge-id="edge6-bj-ghost" class="edge-hidden" d="M145 160 C180 210, 300 240, 370 220" stroke="rgba(251,113,133,.35)" stroke-width="2"
                             fill="none" stroke-dasharray="8 6" />
                         
 
@@ -878,10 +906,10 @@
                     <h3 style="margin:0 0 8px 0;">Przebieg (graf dynamiczny)</h3>
                     <ol style="margin:0; padding-left:18px; font-size:15px; color:var(--muted); line-height:1.5;">
                         <li><b>Start:</b> brak krawędzi romantycznych (Bridget singiel)</li>
-                        <li><span class="pill good" style="font-size:11px;">Bridget ↔ Jack</span> like ⇒ szybki <b>match</b></li>
-                        <li><span class="pill good" style="font-size:11px;">Bridget ↔ Mark</span> ponowny like ⇒ <b>match</b></li>
-                        <li><span class="pill warn" style="font-size:11px;">?</span> Ciąża — brak wiedzy o ojcu: <b>graf niespójny</b> (dwa równoległe match'e)</li>
-                        <li><span class="pill bad" style="font-size:11px;">DNA</span> Test DNA: usunięcie krawędzi Bridget–Jack</li>
+                        <li><span class="pill good" data-edge-target="edge6-bj edge6-jb" style="font-size:11px;">Bridget ↔ Jack</span> like ⇒ szybki <b>match</b></li>
+                        <li><span class="pill good" data-edge-target="edge6-bm edge6-mb" style="font-size:11px;">Bridget ↔ Mark</span> ponowny like ⇒ <b>match</b></li>
+                        <li><span class="pill warn" data-edge-target="edge6-bj edge6-jb edge6-bm edge6-mb" style="font-size:11px;">?</span> Ciąża — brak wiedzy o ojcu: <b>graf niespójny</b> (dwa równoległe match'e)</li>
+                        <li><span class="pill bad" data-edge-target="edge6-bj edge6-jb edge6-bj-ghost" style="font-size:11px;">DNA</span> Test DNA: usunięcie krawędzi Bridget–Jack</li>
                         <li><b>Finał:</b> stabilny match Bridget–Mark</li>
                     </ol>
                     <div class="note" style="margin-top:10px; padding:10px; font-size:13px;">
@@ -905,7 +933,7 @@
 
             <div class="grid">
                 <div class="card">
-                    <svg viewBox="0 0 520 280" role="img" aria-label="Graf relacji - stan końcowy">
+                    <svg viewBox="0 0 520 280" role="img" aria-label="Graf relacji">
                         <defs>
                             <filter id="glow7">
                                 <feGaussianBlur stdDeviation="3" result="coloredBlur" />
@@ -920,17 +948,24 @@
                         </defs>
 
                         <!-- Match Bridget <-> Scott (stan końcowy) -->
-                        <path d="M140 150 C180 100, 280 85, 340 100" stroke="rgba(134,239,172,.85)" stroke-width="2.5"
+                        <path data-edge-id="edge7-bs" class="edge-hidden" d="M140 150 C180 100, 280 85, 340 100" stroke="rgba(134,239,172,.85)" stroke-width="2.5"
                             fill="none" marker-end="url(#arrow7)" />
-                        <path d="M340 130 C280 150, 180 160, 140 165" stroke="rgba(134,239,172,.85)" stroke-width="2.5"
+                        <path data-edge-id="edge7-sb" class="edge-hidden" d="M340 130 C280 150, 180 160, 140 165" stroke="rgba(134,239,172,.85)" stroke-width="2.5"
+                            fill="none" marker-end="url(#arrow7)" />
+                        <!-- Bridget <-> Roxster -->
+                        <path data-edge-id="edge7-br" class="edge-hidden" d="M140 175 C170 220, 260 250, 330 235" stroke="rgba(134,239,172,.65)" stroke-width="2.3"
+                            fill="none" marker-end="url(#arrow7)" />
+                        <path data-edge-id="edge7-rb" class="edge-hidden" d="M330 215 C260 200, 180 180, 140 170" stroke="rgba(134,239,172,.65)" stroke-width="2.3"
                             fill="none" marker-end="url(#arrow7)" />
                         <!-- Usunięta krawędź Roxster (przekreślona - ghosting) -->
-                        <path d="M140 175 C170 220, 260 250, 330 235" stroke="rgba(251,113,133,.35)" stroke-width="2"
+                        <path data-edge-id="edge7-ghost" class="edge-hidden" d="M140 175 C170 220, 260 250, 330 235" stroke="rgba(251,113,133,.35)" stroke-width="2"
                             fill="none" stroke-dasharray="8 6" />
                         <!-- Mark - usunięty wierzchołek (cień) -->
-                        <circle cx="260" cy="45" r="30" fill="none" stroke="rgba(167,139,250,.25)" stroke-width="2" stroke-dasharray="5 5" />
-                        <text x="260" y="42" text-anchor="middle" fill="rgba(238,243,255,.35)" font-size="10" font-weight="700">Mark</text>
-                        <text x="260" y="54" text-anchor="middle" fill="rgba(238,243,255,.35)" font-size="10" font-weight="700">Darcy †</text>
+                        <g data-edge-id="edge7-mark" class="edge-hidden">
+                            <circle cx="260" cy="45" r="30" fill="none" stroke="rgba(167,139,250,.25)" stroke-width="2" stroke-dasharray="5 5" />
+                            <text x="260" y="42" text-anchor="middle" fill="rgba(238,243,255,.35)" font-size="10" font-weight="700">Mark</text>
+                            <text x="260" y="54" text-anchor="middle" fill="rgba(238,243,255,.35)" font-size="10" font-weight="700">Darcy †</text>
+                        </g>
 
                         <!-- nodes -->
                         <g filter="url(#glow7)">
@@ -951,10 +986,10 @@
                 <div class="card">
                     <h3 style="margin:0 0 8px 0;">Przebieg (graf dynamiczny)</h3>
                     <ol style="margin:0; padding-left:18px; font-size:15px; color:var(--muted); line-height:1.5;">
-                        <li><b>Start:</b> usunięcie wierzchołka Mark <span class="pill bad" style="font-size:11px;">†</span> (śmierć) — graf się redukuje</li>
-                        <li><span class="pill good" style="font-size:11px;">Bridget ↔ Roxster</span> like ⇒ <b>match</b></li>
-                        <li><span class="pill bad" style="font-size:11px;">👻</span> Roxster <b>ghostuje</b> — usunięcie krawędzi</li>
-                        <li><span class="pill good" style="font-size:11px;">Bridget ↔ Scott</span> like ⇒ <b>match</b></li>
+                        <li><b>Start:</b> usunięcie wierzchołka Mark <span class="pill bad" data-edge-target="edge7-mark" style="font-size:11px;">†</span> (śmierć) — graf się redukuje</li>
+                        <li><span class="pill good" data-edge-target="edge7-br edge7-rb" style="font-size:11px;">Bridget ↔ Roxster</span> like ⇒ <b>match</b></li>
+                        <li><span class="pill bad" data-edge-target="edge7-ghost edge7-br edge7-rb" style="font-size:11px;">👻</span> Roxster <b>ghostuje</b> — usunięcie krawędzi</li>
+                        <li><span class="pill good" data-edge-target="edge7-bs edge7-sb" style="font-size:11px;">Bridget ↔ Scott</span> like ⇒ <b>match</b></li>
                         <li><b>Koniec:</b> stabilny match Bridget–Scott</li>
                     </ol>
                     <div class="note" style="margin-top:10px; padding:10px; font-size:13px;">
@@ -1044,6 +1079,8 @@
         const bars = Array.from(document.querySelectorAll("[data-bar]"));
         const prevBtn = document.getElementById("prevBtn");
         const nextBtn = document.getElementById("nextBtn");
+        const pills = Array.from(document.querySelectorAll('[data-edge-target]'));
+        const edgeEls = Array.from(document.querySelectorAll('[data-edge-id]'));
         const total = slides.length;
         let idx = 0;
 
@@ -1186,6 +1223,43 @@
             b.setAttribute("aria-valuemin", "1");
             b.setAttribute("aria-valuemax", total);
             b.setAttribute("aria-label", "Postęp prezentacji");
+        });
+
+        // Edges toggling driven by pills
+        function setEdgeVisibility(id, show) {
+            edgeEls
+                .filter(el => el.dataset.edgeId === id)
+                .forEach(el => {
+                    el.classList.toggle('edge-hidden', !show);
+                    el.classList.toggle('edge-visible', show);
+                });
+        }
+
+        function togglePill(pill) {
+            const targets = (pill.dataset.edgeTarget || '').split(/\s+/).filter(Boolean);
+            const willActivate = !pill.classList.contains('active');
+            pill.classList.toggle('active', willActivate);
+            pill.setAttribute('aria-pressed', String(willActivate));
+            targets.forEach(id => setEdgeVisibility(id, willActivate));
+        }
+
+        pills.forEach(pill => {
+            pill.setAttribute('role', 'button');
+            pill.setAttribute('tabindex', '0');
+            pill.setAttribute('aria-pressed', 'false');
+            pill.addEventListener('click', () => togglePill(pill));
+            pill.addEventListener('keydown', (e) => {
+                if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault();
+                    togglePill(pill);
+                }
+            });
+        });
+
+        // Hide all edges on load
+        edgeEls.forEach(el => {
+            el.classList.add('edge-hidden');
+            el.classList.remove('edge-visible');
         });
     </script>
 </body>
