@@ -642,8 +642,8 @@
             <div class="two">
                 <div class="card">
                     <p><span class="pill">Osoba</span> to wierzchołek (np. Bridget Jones, Mark Darcy…)</p>
-                    <p><span class="pill">Like</span> to krawędź skierowana, związana z akcją: Bridget polubiła Marka</p>
-                    <p><span class="pill good">Match</span> to krawędź nieskierowana, która powstanie wtedy i tylko wtedy, gdy zaistnieją dwa polubienia: Bridget→Mark oraz Mark→Bridget</p>
+                    <p><span class="pill">Like</span> to krawędź skierowana, związana z akcją <br> np. Bridget polubiła Marka</p>
+                    <p><span class="pill good">Match</span> to krawędź nieskierowana, która powstanie wtedy i tylko wtedy, gdy zaistnieją dwa polubienia: <br> Bridget→Mark oraz Mark→Bridget</p>
                     <p><span class="pill warn">Superlike</span> to inny typ krawędzi skierowanej (o większej wadze)</p>
                     <p><span class="pill bad">Ghosting</span> przerwanie relacji w czasie (krawędź znika)</p>
                 </div>
@@ -652,7 +652,7 @@
                     <p class="mono small">
                         G = (V, E)<br />
                         V — zbiór osób<br />
-                        E ⊆ V × V — relacja „like" (skierowana)
+                        E ⊆ V × V — np. relacja <b>like</b>
                     </p>
                 </div>
             </div>
@@ -894,7 +894,7 @@
                     <ol style="margin:0; padding-left:18px; font-size:15px; color:var(--muted); line-height:1.5;">
                         <li><span class="pill good" data-edge-target="edge6-bj edge6-jb" style="font-size:11px;">Bridget - Jack</span> <b>It's a match!</b></li>
                         <li><span class="pill good" data-edge-target="edge6-bm edge6-mb" style="font-size:11px;">Bridget - Mark</span> <b>It's a match!</b></li>
-                        <li><span class="pill warn active" data-edge-target="edge6-bj edge6-bm" style="font-size:11px;">?</span> Ciąża - kto jest ojcem?</li>
+                        <li>Ciąża - kto jest ojcem <span class="pill warn active" data-edge-target="edge6-bj edge6-bm" style="font-size:11px;">?</span></li>
                         <li><span class="pill bad active" data-edge-target="edge6-bj" style="font-size:11px;">DNA</span> Test DNA</li>
                     </ol>
                     <div class="note" style="margin-top:10px; padding:10px; font-size:13px;">
@@ -1037,8 +1037,8 @@
             <div class="card">
                 <ul>
                     <li>Like to relacja skierowana: zwykle nie jest symetryczna 🥲</li>
-                    <li>Match można przedstawić jako nieskierowaną, ale powstaje wtedy i tylko wtedy, dwie przeciwnie skierowane krawędzie Like.</li>
-                    <li>Superlike można modelować wagą lub innym typem krawędzi.</li>
+                    <li>Match można przedstawić jako nieskierowaną, ale też równoważnie jako dwie przeciwnie skierowane krawędzie Like.</li>
+                    <li>Superlike to Like z większą wagą. Czy ktoś z Was dał komuś Superlike'a?</li>
                     <li>Ghosting i powroty pokazują, że graf jest dynamiczny: G(t).</li>
                 </ul>
             </div>
