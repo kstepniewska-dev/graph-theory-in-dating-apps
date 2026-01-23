@@ -611,7 +611,7 @@
                     <h2>Co zobaczymy?</h2>
                     <ul>
                         <li>Podstawy teorii grafów: <b>wierzchołki</b> i <b>krawędzie</b>.</li>
-                        <li>Rodzaje relacji: <b>skierowane</b> i <b>nieskierowane</b>.</li>
+                        <li>Rodzaje krawędzi: <b>skierowane</b> i <b>nieskierowane</b>.</li>
                         <li>Własności relacji: <b>zwrotność</b>, <b>symetryczność</b>, <b>przechodniość</b>.</li>
                         <li>Ciąg grafów <b>Bridget Jones</b> zmieniających się w czasie.</li>
                     </ul>
@@ -643,8 +643,8 @@
                 <div class="card">
                     <p><span class="pill">Osoba</span> to wierzchołek (np. Bridget Jones, Mark Darcy…)</p>
                     <p><span class="pill">Like</span> to krawędź skierowana, związana z akcją <br> np. Bridget polubiła Marka</p>
-                    <p><span class="pill good">Match</span> to krawędź nieskierowana, która powstanie wtedy i tylko wtedy, gdy zaistnieją dwa polubienia: <br> Bridget→Mark oraz Mark→Bridget</p>
-                    <p><span class="pill warn">Superlike</span> to inny typ krawędzi skierowanej (o większej wadze)</p>
+                    <p><span class="pill good">Match</span> to krawędź nieskierowana, która powstanie wtedy i tylko wtedy, gdy wcześniej zaistnieją dwa polubienia: Bridget→Mark oraz Mark→Bridget</p>
+                    <p><span class="pill warn">Superlike</span> to typ krawędzi skierowanej (o większej wadze)</p>
                     <p><span class="pill bad">Ghosting</span> przerwanie relacji w czasie (krawędź znika)</p>
                 </div>
                 <div class="card">
@@ -674,7 +674,7 @@
                 <div class="card">
                     <h3 style="margin:0 0 10px 0;">Relacje i ich własności</h3>
                     <ul>
-                        <li><b>Like</b> nie jest <b>zwrotny</b>, bo nie można dać <b>like</b>'a samemu sobie, nie jest również <b>symetryczny</b>: A→B nie wymusza B→A.</li>
+                        <li><b>Like</b> nie jest <b>zwrotny</b>, bo nie można dać <b>like</b>'a samemu sobie, nie jest również <b>symetryczny</b>: Bridget → Daniel nie wymusza Daniel → Bridget.</li>
                         <li><b>Match</b> również nie jest <b>zwrotny</b>, ale tworzy relację <b>symetryczną</b> (w praktyce: krawędź nieskierowana).</li>
                         <li><b>Superlike</b> może być traktowany jako <b>like</b> o większej wadze.</li>
                         <li><b>Czy relacje na Tinderze mogą być przechodnie?</b></li>
@@ -687,7 +687,7 @@
                         <span class="pill">A→B like</span>
                         <span class="pill warn">A<b>→</b>B superlike</span>
                         <span class="pill good">A—B match</span>
-                        <span class="pill bad">× zniknięcia</span>
+                        <span class="pill bad">× zniknięcie</span>
                     </div>
                 </div>
             </div>
@@ -761,7 +761,7 @@
                         <li><span class="pill" data-edge-target="edge4-mb" style="font-size:11px;">Mark → Bridget</span> <b>Like!</b></li>
                     </ol>
                     <div class="note" style="margin-top:10px; padding:10px; font-size:13px;">
-                        👉 <b>Interpretacja:</b> krawędzie są dynamicznie dodawane (like, match) i usuwane (zdrada). Zwycięża stabilny match Bridget i Marka.
+                        👉 <b>Interpretacja:</b> krawędzie są dynamicznie dodawane (like) i usuwane (po zdradzie). Zwycięża stabilny match Bridget i Marka.
                     </div>
                 </div>
             </div>
@@ -898,7 +898,7 @@
                         <li><span class="pill bad active" data-edge-target="edge6-bj" style="font-size:11px;">DNA</span> Test DNA</li>
                     </ol>
                     <div class="note" style="margin-top:10px; padding:10px; font-size:13px;">
-                        👉 <b>Interpretacja:</b> Konflikt konkurencyjnych matchy został rozwiązany przez test DNA. Redukcja grafu do jednego stabilnego połączenia.
+                        👉 <b>Interpretacja:</b> Konflikt konkurencyjnych matchy został rozwiązany przez test DNA. Redukcja grafu do jednego stabilnego połączenia Bridget i Marka.
                     </div>
                 </div>
             </div>
@@ -978,7 +978,7 @@
                         <li><span class="pill good" data-edge-target="edge7-bs-match" style="font-size:11px;">Bridget - Scott</span> <b>It's a match!</b></li>
                     </ol>
                     <div class="note" style="margin-top:10px; padding:10px; font-size:13px;">
-                        👉 <b>Interpretacja:</b> utrata kluczowego wierzchołka wymusza rekonstrukcję grafu; relacja przejściowa (ghosting) zostaje odfiltrowana, a graf dąży do nowej stabilnej konfiguracji.
+                        👉 <b>Interpretacja:</b> utrata kluczowego wierzchołka wymusza rekonstrukcję grafu; relacja przejściowa (zakończona ghostingiem) zostaje odfiltrowana, a graf dąży do nowej stabilnej konfiguracji.
                     </div>
                 </div>
             </div>
@@ -994,7 +994,7 @@
         <!-- SLIDE 8 -->
         <section class="slide" role="group" aria-roledescription="slajd" aria-label="Slajd 8 z 9">
             <div class="kicker">⏱️ Graf dynamiczny</div>
-            <h2>To nie jest jeden graf — to graf w czasie</h2>
+            <h2>To nie jest jeden graf - to ciąg grafów zależnych od czasu</h2>
             <div class="grid">
                 <div class="card">
                     <p>
@@ -1003,7 +1003,7 @@
                     </p>
                     <p class="mono small">
                         G(t) = (V(t), E(t))<br />
-                        t — czas (dni / tygodnie / etapy fabuły)
+                        t — czas (dni/tygodnie/etapy fabuły)
                     </p>
                     <ul>
                         <li><b>ghosting</b>: krawędź znika po czasie, mimo wcześniejszego matchu,</li>
@@ -1015,9 +1015,9 @@
                 <div class="card">
                     <h3 style="margin:0 0 10px 0;">Dlaczego to ciekawe?</h3>
                     <ul>
-                        <li>Możemy analizować „stabilność" relacji jako trwałość krawędzi.</li>
+                        <li>Możemy analizować stabilność relacji jako trwałość krawędzi.</li>
                         <li>Możemy liczyć stopnie wierzchołków (kto ma najwięcej interakcji).</li>
-                        <li>Możemy zadać pytania: kiedy graf staje się spójny? kiedy się rozpada?</li>
+                        <li>Możemy zadać pytania: kiedy stan jest stabilny? kiedy się rozpada?</li>
                     </ul>
                 </div>
             </div>
@@ -1036,9 +1036,9 @@
             <h2>Podsumowanie</h2>
             <div class="card">
                 <ul>
-                    <li>Like to relacja skierowana: zwykle nie jest symetryczna 🥲</li>
+                    <li>Like to krawędź skierowana: zwykle nie jest symetryczna 🥲</li>
                     <li>Match można przedstawić jako nieskierowaną, ale też równoważnie jako dwie przeciwnie skierowane krawędzie Like.</li>
-                    <li>Superlike to Like z większą wagą. Czy ktoś z Was dał komuś Superlike'a?</li>
+                    <li>Superlike to Like z większą wagą. Czy ktoś z Was kiedyś dał komuś Superlike'a?</li>
                     <li>Ghosting i powroty pokazują, że graf jest dynamiczny: G(t).</li>
                 </ul>
             </div>
